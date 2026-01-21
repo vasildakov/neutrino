@@ -2,11 +2,10 @@
 
 declare(strict_types=1);
 
-namespace AppTest;
+namespace App\test\AppTest;
 
 use Psr\Container\ContainerInterface;
 use RuntimeException;
-
 use function array_key_exists;
 use function sprintf;
 

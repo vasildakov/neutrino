@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace AppTest\Handler;
+namespace App\test\AppTest\Handler;
 
-use App\Handler\HomePageHandler;
-use App\Handler\HomePageHandlerFactory;
-use AppTest\InMemoryContainer;
+use App\test\AppTest\InMemoryContainer;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
+use App\Handler\HomePageHandler;
+use App\Handler\HomePageHandlerFactory;
 use PHPUnit\Framework\TestCase;
 
 final class HomePageHandlerFactoryTest extends TestCase

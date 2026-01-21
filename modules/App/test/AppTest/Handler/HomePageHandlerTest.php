@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace AppTest\Handler;
+namespace App\test\AppTest\Handler;
 
-use App\Handler\HomePageHandler;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
+use modules\App\src\Handler\HomePageHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

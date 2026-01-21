@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Handler\HomePageHandler;
-use App\Handler\PingHandler;
 use Mezzio\Application;
 use Mezzio\MiddlewareFactory;
+use App\Handler\HomePageHandler;
+use App\Handler\PingHandler;
 use Psr\Container\ContainerInterface;
 
 /**
