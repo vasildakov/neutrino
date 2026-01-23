@@ -6,6 +6,7 @@ namespace AppTest;
 
 use Psr\Container\ContainerInterface;
 use RuntimeException;
+
 use function array_key_exists;
 use function sprintf;
 

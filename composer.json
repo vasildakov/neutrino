@@ -82,7 +82,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "AppTest\\": "modules/AppTest/"
+            "AppTest\\": "modules/App/test/AppTest/"
         }
     },
     "scripts": {
