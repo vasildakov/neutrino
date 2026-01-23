@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\test\AppTest;
+namespace AppTest;
 
 use Psr\Container\ContainerInterface;
 use RuntimeException;

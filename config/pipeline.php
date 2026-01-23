@@ -13,6 +13,7 @@ use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
+use PhpMiddleware\PhpDebugBar\PhpDebugBarMiddleware;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -20,6 +21,12 @@ use Psr\Container\ContainerInterface;
  */
 
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
+
+    if (! empty($container->get('config')['debug'])) {
+        $app->pipe(PhpDebugBarMiddleware::class);
+    }
+
+
     // The error handler should be the first (most outer) middleware to catch
     // all Exceptions.
     $app->pipe(ErrorHandler::class);
