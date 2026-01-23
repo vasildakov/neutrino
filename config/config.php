@@ -13,7 +13,6 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
-    \Mezzio\Tooling\ConfigProvider::class,
     \Mezzio\LaminasView\ConfigProvider::class,
     \Mezzio\Router\LaminasRouter\ConfigProvider::class,
     \Laminas\Router\ConfigProvider::class,
@@ -32,6 +31,11 @@ $aggregator = new ConfigAggregator([
         : function (): array {
             return [];
         },
+    class_exists(\Mezzio\Tooling\ConfigProvider::class)
+        ? \Mezzio\Tooling\ConfigProvider::class
+        : function (): array {
+        return [];
+    },
 
     // Default App module config
     App\ConfigProvider::class,
