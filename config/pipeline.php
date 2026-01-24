@@ -22,11 +22,6 @@ use Psr\Container\ContainerInterface;
 
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
 
-    if (! empty($container->get('config')['debug'])) {
-        $app->pipe(PhpDebugBarMiddleware::class);
-    }
-
-
     // The error handler should be the first (most outer) middleware to catch
     // all Exceptions.
     $app->pipe(ErrorHandler::class);
@@ -81,4 +76,8 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // NotFoundHandler kicks in; alternately, you can provide other fallback
     // middleware to execute.
     $app->pipe(NotFoundHandler::class);
+
+    if (! empty($container->get('config')['debug'])) {
+        $app->pipe(PhpDebugBarMiddleware::class);
+    }
 };

@@ -32,4 +32,8 @@ return [
             'ajax_only'  => true,
         ],
     ],
+    'debug' => true,
+    'debugbar' => [
+        'enabled' => true,
+    ],
 ];

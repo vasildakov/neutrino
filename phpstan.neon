@@ -1,0 +1,13 @@
+parameters:
+    level: 6
+
+    paths:
+        - modules
+
+    excludePaths:
+        - modules/*/test
+        - vendor
+
+    tmpDir: data/cache/phpstan
+
+#    ignoreErrors:
