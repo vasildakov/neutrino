@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Handler;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
@@ -22,6 +23,8 @@ final class HomePageHandlerFactory
             : null;
         assert($template instanceof TemplateRendererInterface || null === $template);
 
-        return new HomePageHandler($container::class, $router, $template);
+        $em = $container->get(EntityManagerInterface::class);
+
+        return new HomePageHandler($container::class, $router, $em, $template);
     }
 }

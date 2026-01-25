@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace App;
 
+use App\Handler\HomePageHandler;
+use App\Handler\HomePageHandlerFactory;
+use App\Handler\PingHandler;
+use Doctrine\ORM\Mapping\Driver\AttributeDriver;
+
 /**
  * The configuration provider for the App module
  *
@@ -22,6 +27,7 @@ class ConfigProvider
         return [
             'dependencies' => $this->getDependencies(),
             'templates'    => $this->getTemplates(),
+            'doctrine'     => $this->getDoctrineEntities(),
         ];
     }
 
@@ -32,10 +38,10 @@ class ConfigProvider
     {
         return [
             'invokables' => [
-                \App\Handler\PingHandler::class => \App\Handler\PingHandler::class,
+                PingHandler::class => PingHandler::class,
             ],
             'factories'  => [
-                \App\Handler\HomePageHandler::class => \App\Handler\HomePageHandlerFactory::class,
+                HomePageHandler::class => HomePageHandlerFactory::class,
             ],
         ];
     }
@@ -50,6 +56,29 @@ class ConfigProvider
                 'app'    => [__DIR__ . '/../templates/app'],
                 'error'  => [__DIR__ . '/../templates/error'],
                 'layout' => [__DIR__ . '/../templates/layout'],
+            ],
+        ];
+    }
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function getDoctrineEntities(): array
+    {
+        return [
+            'driver'   => [
+                'app_entity'  => [
+                    'class' => AttributeDriver::class,
+                    'paths' => [__DIR__ . '/Entity'],
+                ],
+                'orm_default' => [
+                    'drivers' => [
+                        'App\Entity' => 'app_entity',
+                    ],
+                ],
+            ],
+            'fixtures' => [
+                'paths' => [__DIR__ . '/Fixtures'],
             ],
         ];
     }

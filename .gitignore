@@ -7,3 +7,5 @@
 /vendor/
 .idea
 .env
+/modules/Doctrine/
+/modules/Doctrine/build/
