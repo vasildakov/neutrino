@@ -2,6 +2,14 @@
 
 declare(strict_types=1);
 
+// Load .env early
+use Dotenv\Dotenv;
+
+$root = dirname(__DIR__, 2);
+require $root . '/vendor/autoload.php';
+Dotenv::createImmutable($root)->safeLoad();
+
+
 return [
     // Provides application-wide services.
     // We recommend using fully-qualified class names whenever possible as

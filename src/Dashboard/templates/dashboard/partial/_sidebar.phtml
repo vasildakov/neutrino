@@ -1,0 +1,137 @@
+<?php
+/**
+ * @noinspection PhpFullyQualifiedNameUsageInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ */
+
+$escape = fn(string $v) => htmlspecialchars($v, ENT_QUOTES, 'UTF-8');
+
+$icon = static function ($page) use ($escape): string {
+    $i = $page->get('icon');
+    return $i ? '<i data-feather="' . $escape((string) $i) . '"></i>' : '';
+};
+?>
+<style>
+    /* Sidebar chevron animation */
+    .sidebar-chevron {
+        width: 16px;
+        height: 16px;
+        transition: transform 0.2s ease;
+    }
+
+    /* Rotate when expanded */
+    .nav-link[aria-expanded="true"] .sidebar-chevron {
+        transform: rotate(90deg);
+    }
+    .nav-link.active {
+        font-weight: normal !important;
+    }
+</style>
+
+<div class="sidebar">
+
+    <div class="sidebar-header d-flex align-items-center mb-3">
+        <a href="#" class="sidebar-logo"><i data-feather="codesandbox" class="text-white opacity-50"></i></a>
+        <a href="/dashboard2" class="sidebar-logo-text"><span class="text-white">Dashboard</span></a>
+    </div><!-- sidebar-header -->
+
+    <div class="sidebar-search">
+        <div class="search-body">
+            <i data-feather="search"></i>
+            <input type="text" class="form-control" placeholder="Search...">
+        </div><!-- search-body -->
+    </div><!-- sidebar-search -->
+
+    <div class="sidebar-body">
+        <ul class="nav nav-sidebar flex-column">
+            <?php foreach ($this->container as $page): ?>
+                <?php if (!$page->isVisible()) continue; ?>
+
+                <?php $hasChildren = $page->hasPages(); ?>
+
+                <?php if (!$hasChildren): ?>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $page->isActive() ? 'active' : '' ?>"
+                           href="<?= $this->url($page->getRoute(), $page->getParams() ?: []) ?>">
+                            <?= $icon($page) ?>
+                            <span class="ms-1"><?= $page->getLabel() ?></span>
+                        </a>
+                    </li>
+
+                <?php else: ?>
+                    <?php
+                    $open = $page->isActive(true);
+
+                    $collapseId = 'nav_' . preg_replace('/[^a-z0-9_]+/i', '_', (string) $page->getId());
+                    ?>
+
+                    <li class="nav-item">
+                        <!-- ✅ also mark parent as active when any descendant is active -->
+                        <a class="nav-link d-flex align-items-center <?= $open ? 'active' : '' ?>"
+                           data-bs-toggle="collapse"
+                           href="#<?= $escape($collapseId) ?>"
+                           role="button"
+                           aria-expanded="<?= $open ? 'true' : 'false' ?>"
+                           aria-controls="<?= $escape($collapseId) ?>">
+                            <?= $icon($page) ?>
+                            <span class="ms-1"><?= $page->getLabel() ?></span>
+                            <i data-feather="chevron-down" class="ms-auto sidebar-chevron"></i>
+                        </a>
+
+                        <div class="collapse <?= $open ? 'show' : '' ?>" id="<?= $escape($collapseId) ?>">
+                            <ul class="nav flex-column ms-1 mt-1">
+                                <?php foreach ($page->getPages() as $child): ?>
+                                    <?php if (!$child->isVisible()) continue; ?>
+
+                                    <?php
+                                    // ✅ make "Books" active even when a hidden child (edit/show/etc) is active
+                                    $childActive = $child->isActive(true);
+                                    ?>
+
+                                    <li class="nav-item">
+                                        <a class="nav-link <?= $childActive ? 'active' : '' ?>"
+                                           href="<?= $this->url($child->getRoute(), $child->getParams() ?: []) ?>">
+                                            <?= $icon($child) ?>
+                                            <span class="ms-1"><?= $child->getLabel() ?></span>
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        </ul>
+
+        <hr>
+
+        <nav class="nav-sidebar">
+            <a href="<?=$this->url('dashboard.logs.list');?>" class="nav-link"><i data-feather="activity"></i><span>Activity Logs</span></a>
+            <a href="<?=$this->url('dashboard.settings.show');?>" class="nav-link"><i data-feather="settings"></i><span>Settings</span></a>
+            <a href="" class="nav-link"><i data-feather="help-circle"></i><span>Help &amp; Support</span></a>
+            <a href="" class="nav-link"><i data-feather="edit-3"></i><span>Give Feedback</span></a>
+            <a href="<?=$this->url('dashboard.design.show');?>" class="nav-link"><i data-feather="figma"></i><span>Dashboard design</span></a>
+        </nav>
+
+    </div>
+
+
+    <div class="sidebar-footer">
+        <a href="" class="avatar online"><span class="avatar-initial">v</span></a>
+        <div class="avatar-body">
+            <div class="d-flex align-items-center justify-content-between">
+                <h6 class="m-0 text-white opacity-50">Vasil Dakov</h6>
+                <a href="" class="footer-menu"><i class="ri-settings-4-line"></i></a>
+            </div>
+            <span>Superuser/Administrator</span>
+        </div><!-- avatar-body -->
+    </div><!-- sidebar-footer -->
+
+    <!--div class="sidebar-footer">
+        <a href="" class="footer-menu"><i class="ri-shut-down-line"></i></a>
+    </div-->
+
+
+
+</div>

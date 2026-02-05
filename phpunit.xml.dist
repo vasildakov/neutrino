@@ -10,7 +10,7 @@
 >
     <testsuites>
         <testsuite name="default">
-            <directory>./modules/App/test</directory>
+            <directory>./tests</directory>
         </testsuite>
     </testsuites>
 

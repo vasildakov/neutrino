@@ -1,0 +1,39 @@
+<div class="card border-0 rounded-0">
+    <div class="card-body p-5">
+        <h3 content="mb-5">Database <strong>Health</strong></h3>
+        <br><br>
+        <table class="table no-more-table">
+            <thead>
+            <tr>
+                <th><input id="checkbox10" type="checkbox" value="1" class="checkall"></th>
+                <th>ID</th>
+                <th>Database</th>
+                <th>Status</th>
+                <th>Latency</th>
+                <th>Migration</th>
+                <th>Size</th>
+                <th>Created</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <?php foreach ($this->results as $object): ?>
+            <tr>
+                <td><input type="checkbox"></td>
+                <td><span class="">..</td>
+                <td><span class=""><i data-feather="database" width="18" height="18" class="align-middle text-muted me-1"></i> <?=$object->database;?></td>
+                <td><span class="badge text-bg-success rounded-1">OK</span></td>
+                <td><span class=""><?=$object->latency;?> ms</td>
+                <td><span class="">...</td>
+                <td><span class=""><?=$object->size;?> MB</td>
+                <td><span class="">...</td>
+                <td><span class="">
+                    <a class="" href="#">View</a>
+                </td>
+            </tr>
+            <?php endforeach; ?>
+
+            </tbody>
+        </table>
+    </div>
+</div>

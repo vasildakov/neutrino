@@ -9,10 +9,14 @@ use Laminas\ConfigAggregator\PhpFileProvider;
 // To enable or disable caching, set the `ConfigAggregator::ENABLE_CACHE` boolean in
 // `config/autoload/local.php`.
 $cacheConfig = [
-    'config_cache_path' => 'data/cache/config-cache.php',
+    'config_cache_path' => './data/cache/config-cache.php',
 ];
 
 $aggregator = new ConfigAggregator([
+    \Mezzio\Session\Ext\ConfigProvider::class,
+    \Mezzio\Authentication\Session\ConfigProvider::class,
+    \Mezzio\Session\ConfigProvider::class,
+    \Mezzio\Authentication\ConfigProvider::class,
     \Mezzio\LaminasView\ConfigProvider::class,
     \Mezzio\Router\LaminasRouter\ConfigProvider::class,
     \Laminas\Router\ConfigProvider::class,
@@ -24,6 +28,7 @@ $aggregator = new ConfigAggregator([
     \Mezzio\ConfigProvider::class,
     \Mezzio\Router\ConfigProvider::class,
     \Laminas\Diactoros\ConfigProvider::class,
+    \VasilDakov\Doctrine\ConfigProvider::class,
 
     // Swoole config to overwrite some services (if installed)
     class_exists(\Mezzio\Swoole\ConfigProvider::class)
@@ -38,8 +43,9 @@ $aggregator = new ConfigAggregator([
     },
 
     // Default App module config
-    App\ConfigProvider::class,
-    VasilDakov\Doctrine\ConfigProvider::class,
+    \Neutrino\ConfigProvider::class,
+    \Dashboard\ConfigProvider::class,
+
 
     // Load application config in a pre-defined order in such a way that local settings
     // overwrite global settings. (Loaded as first to last):

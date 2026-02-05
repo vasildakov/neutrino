@@ -13,6 +13,7 @@ use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
+use Mezzio\Session\SessionMiddleware;
 use PhpMiddleware\PhpDebugBar\PhpDebugBarMiddleware;
 use Psr\Container\ContainerInterface;
 
@@ -47,6 +48,7 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
 
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Mezzio\Router\RouteResult request attribute.
+    $app->pipe(SessionMiddleware::class);
     $app->pipe(RouteMiddleware::class);
 
     // The following handle routing failures for common conditions:
