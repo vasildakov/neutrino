@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Platform\Handler;
 
 use Platform\Service\Database\DatabaseStatsServiceInterface;
@@ -16,8 +25,8 @@ class ShowDatabasesHandler implements RequestHandlerInterface
     private int $connectTimeoutSeconds = 2;
 
     public function __construct(
-        private TemplateRendererInterface $template,
-        private DatabaseStatsServiceInterface $service
+        private readonly TemplateRendererInterface $template,
+        private readonly DatabaseStatsServiceInterface $service
     ) {
     }
 

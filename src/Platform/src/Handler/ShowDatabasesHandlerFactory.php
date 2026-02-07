@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Platform\Handler;
 
 use Doctrine\DBAL\Connection;
@@ -13,7 +20,7 @@ use Platform\Service\Database\DatabaseStatsService;
 use Platform\Service\Database\DatabaseStatsServiceInterface;
 use Psr\Container\ContainerInterface;
 
-class ShowDatabasesHandlerFactory
+final class ShowDatabasesHandlerFactory
 {
     public function __invoke(ContainerInterface $container): ShowDatabasesHandler
     {
@@ -34,9 +41,6 @@ class ShowDatabasesHandlerFactory
         $service = $container->get(DatabaseStatsService::class);
         assert($service instanceof DatabaseStatsServiceInterface);
 
-        return new ShowDatabasesHandler(
-            $template,
-            $service
-        );
+        return new ShowDatabasesHandler($template, $service);
     }
 }
