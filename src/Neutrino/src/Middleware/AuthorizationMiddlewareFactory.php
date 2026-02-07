@@ -12,10 +12,16 @@ declare(strict_types=1);
 namespace Neutrino\Middleware;
 
 use Neutrino\Security\Authorization\AuthorizationServiceInterface;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 class AuthorizationMiddlewareFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): AuthorizationMiddleware
     {
         $authorization = $container->get(AuthorizationServiceInterface::class);
