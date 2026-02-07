@@ -9,7 +9,7 @@ use Psr\Container\ContainerInterface;
 use Doctrine\DBAL\Connection;
 use Psr\Container\NotFoundExceptionInterface;
 
-final class CreateDatabaseCommandFactory
+class CreateDatabaseCommandFactory
 {
     /**
      * @throws ContainerExceptionInterface

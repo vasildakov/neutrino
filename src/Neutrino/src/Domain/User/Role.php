@@ -21,11 +21,14 @@ use Ramsey\Uuid\UuidInterface;
 
 #[ORM\Entity]
 #[ORM\Table(name: 'roles')]
-#[ORM\UniqueConstraint(name: 'uniq_role_name_scope', columns: ['name', 'scope'])]
+#[ORM\UniqueConstraint(
+    name: 'uniq_role_name_scope',
+    columns: ['name', 'scope']
+)]
 class Role implements RoleInterface
 {
     public const SCOPE_PLATFORM = 'platform';
-    public const SCOPE_STORE = 'store';
+    public const SCOPE_DASHBOARD = 'dashboard';
 
 
     public const ROLE_GUEST = 'guest';
@@ -45,7 +48,7 @@ class Role implements RoleInterface
     #[ORM\Column(type: 'string', length: 64, unique: true)]
     private string $name;
 
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: 'string', length: 32)]
     private string $scope;
 
     #[ORM\ManyToOne(targetEntity: self::class, inversedBy: 'children')]
@@ -143,11 +146,15 @@ class Role implements RoleInterface
         return $this->children;
     }
 
-    public function scope(): RoleScope
+    public function isPlatformScope(): bool
+    {
+        return $this->scope === self::SCOPE_PLATFORM;
+    }
+
+    public function getScope(): string
     {
         return $this->scope;
     }
-
 
     public function name(): string
     {

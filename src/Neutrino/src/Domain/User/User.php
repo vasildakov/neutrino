@@ -32,6 +32,9 @@ class User implements UserInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected UuidInterface|string $id;
 
+    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    private ?string $avatar = null;
+
     /**
      * @var Collection<int, UserRole>
      */
@@ -58,12 +61,24 @@ class User implements UserInterface
         return $this->id;
     }
 
+    public function getShortId(): string
+    {
+
+        return substr($this->id->getHex()->toString(), 0, 8);
+
+    }
+
     /**
      * @return Email
      */
     public function getEmail(): Email
     {
         return $this->email;
+    }
+
+    public function getName(): string
+    {
+        return '';
     }
 
     /**
@@ -74,6 +89,16 @@ class User implements UserInterface
         return $this->password;
     }
 
+    public function setAvatar(?string $avatar): void
+    {
+        $this->avatar = $avatar;
+
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
 
     /**
      * @return DateTimeImmutable
@@ -112,7 +137,9 @@ class User implements UserInterface
         }
     }
 
-
+    /**
+     * @return Role[]
+     */
     public function getRoles(): iterable
     {
         return $this->roles->map(fn(UserRole $userRole) => $userRole->getRole());
@@ -126,10 +153,28 @@ class User implements UserInterface
     public function getDetail(string $name, $default = null): mixed
     {
         return match ($name) {
-            'id' => (string) $this->getId(),
-            'email' => $this->getEmail(),
-            default => $default,
+            'id'       => (string) $this->getId(),
+            'email'    => (string) $this->getEmail(),
+            'platform' => $this->hasPlatformRole(),
+            'avatar'   => $this->getAvatar(),
+            default    => $default,
         };
+    }
+
+
+    public function hasPlatformRole(): bool
+    {
+        foreach ($this->roles as $userRole) {
+            if ($userRole->getRole()->isPlatformScope()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getScope(): string
+    {
+        return $this->hasPlatformRole() ? Role::SCOPE_PLATFORM : Role::SCOPE_DASHBOARD;
     }
 
     /**
@@ -138,8 +183,18 @@ class User implements UserInterface
     public function getDetails(): array
     {
         return [
-            'id' => (string) $this->getId(),
-            'email' => $this->getEmail(),
+            'id'       => (string) $this->getId(),
+            'email'    => (string) $this->getEmail(),
+            'scope'    => $this->getScope(),
+            'platform' => $this->hasPlatformRole(),
+            'avatar'   => $this->getAvatar(),
         ];
+    }
+
+    public function getRolesNames(): array
+    {
+        return $this->roles->map(
+            fn(UserRole $userRole) => $userRole->getRole()->name()
+        )->toArray();
     }
 }

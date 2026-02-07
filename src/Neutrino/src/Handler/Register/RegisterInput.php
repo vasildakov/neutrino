@@ -1,14 +1,22 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Handler\Register;
 
-final class RegisterInput
+final readonly class RegisterInput
 {
     public function __construct(
-        public readonly string $email,
-        public readonly string $password
+        public string $email,
+        public string $password,
+        public ?string $role = null
     ) {
     }
 }

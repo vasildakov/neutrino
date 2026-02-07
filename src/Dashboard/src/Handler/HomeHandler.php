@@ -7,6 +7,8 @@ namespace Dashboard\Handler;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diagnostics\Check;
 use Laminas\Diagnostics\Runner;
+use Mezzio\Authentication\UserInterface;
+use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -20,6 +22,15 @@ class HomeHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        // Get the authenticated user
+        $user = $request->getAttribute(UserInterface::class);
+
+
+        // session test
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+        $var = $session->get('test');
+        //dd($var);
+
         $runner = new Runner\Runner();
 
         $runner->addCheck(new Check\PhpVersion('8.1', '>'));
@@ -37,6 +48,7 @@ class HomeHandler implements RequestHandlerInterface
         return new HtmlResponse($this->template->render('layout::dashboard', [
             'content' => $content,
             'data'    => $data,
+            'user'    => $user,
         ]));
     }
 }

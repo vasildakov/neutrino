@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dashboard\Service\Database;
+namespace Platform\Service\Database;
 
 /**
  * @psalm-immutable

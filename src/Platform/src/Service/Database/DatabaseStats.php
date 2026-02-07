@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Dashboard\Service\Database;
+namespace Platform\Service\Database;
 
 readonly class DatabaseStats
 {
@@ -12,6 +12,7 @@ readonly class DatabaseStats
      * @param int $latency      The average latency in milliseconds.
      */
     public function __construct(
+        public string $id,
         public string $database,
         public float $size = 0.0,
         public int $latency = 0,
@@ -20,6 +21,7 @@ readonly class DatabaseStats
     public function asArray(): array
     {
         return [
+            'id'       => $this->id,
             'database' => $this->database,
             'size'     => $this->size,
             'latency'  => $this->latency,
@@ -33,6 +35,7 @@ readonly class DatabaseStats
         assert(is_float($data['size']));
 
         return new self(
+            $data['id'],
             $data['database'],
             $data['size']
         );

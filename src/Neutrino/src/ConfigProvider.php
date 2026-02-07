@@ -5,14 +5,12 @@ declare(strict_types=1);
 namespace Neutrino;
 
 use Neutrino\Handler\Register\RegisterService;
-use Neutrino\Entity;
-use Neutrino\Handler;
-use Neutrino\Repository;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\Driver\AttributeDriver;
 use Mezzio\Helper\BodyParams\BodyParamsMiddleware;
+use Neutrino\Security\Authorization\InMemoryAclProvider;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -34,6 +32,7 @@ final class ConfigProvider
             'templates'    => $this->getTemplates(),
             'laminas-cli'  => $this->getCommands(),
             'routes'       => $this->getRoutes(),
+            'view_helpers' => $this->getViewHelperConfig(),
         ];
     }
 
@@ -52,6 +51,13 @@ final class ConfigProvider
                 Handler\PingHandler::class => Handler\PingHandler::class,
             ],
             'factories'  => [
+
+                Middleware\InjectUserToTemplatesMiddleware::class => Middleware\InjectUserToTemplatesMiddlewareFactory::class,
+                Middleware\AuthorizationMiddleware::class => Middleware\AuthorizationMiddlewareFactory::class,
+
+                //SessionManager::class => Session\SessionManagerFactory::class,
+                //Container::class => Session\SessionContainerFactory::class,
+
                 // Neutrino: admin connection using root credentials
                 'neutrino.admin.connection' => function (ContainerInterface $container): Connection {
                     return DriverManager::getConnection([
@@ -67,15 +73,20 @@ final class ConfigProvider
 
                 Handler\Login\LoginFormHandler::class => Handler\Login\LoginFormHandlerFactory::class,
                 Handler\Login\LoginHandler::class => Handler\Login\LoginHandlerFactory::class,
+                Handler\LogoutHandler::class => Handler\LogoutHandlerFactory::class,
 
                 Handler\Register\RegisterHandler::class => Handler\Register\RegisterHandlerFactory::class,
                 Handler\Register\RegisterFormHandler::class => Handler\Register\RegisterFormHandlerFactory::class,
-                RegisterService::class => function (ContainerInterface $container): RegisterService {
-                    return new RegisterService(
+                Handler\Register\RegisterService::class => function (ContainerInterface $container): Handler\Register\RegisterService {
+                    return new Handler\Register\RegisterService(
                         $container->get(EntityManagerInterface::class)
                     );
                 },
 
+
+                // Security
+                Security\Authorization\AclProviderInterface::class => Security\Authorization\InMemoryAclProviderFactory::class,
+                Security\Authorization\AuthorizationServiceInterface::class => Security\Authorization\AuthorizationServiceFactory::class,
 
                 // Services
                 Service\Migrator::class => Service\MigratorFactory::class,
@@ -191,6 +202,23 @@ final class ConfigProvider
             ],
             'fixtures' => [
                 'paths' => [__DIR__ . '/Fixtures'],
+            ],
+        ];
+    }
+
+
+    /**
+     * @return array<string,mixed>
+     */
+    public function getViewHelperConfig(): array
+    {
+        return [
+            'factories' => [
+                View\Helper\Avatar::class  => View\Helper\AvatarFactory::class,
+            ],
+            'aliases' => [
+                'avatar'  => View\Helper\Avatar::class,
+
             ],
         ];
     }

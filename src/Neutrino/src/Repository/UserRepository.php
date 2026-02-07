@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Repository;
 
 use Doctrine\ORM\EntityRepository;
@@ -30,7 +37,6 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
      */
     public function authenticate(string $credential, ?string $password = null): ?UserInterface
     {
-
         /** @var User|null $user */
         $user = $this->createQueryBuilder('u')
             ->where('u.email = :email')
@@ -50,12 +56,8 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         // You can also create your own class implementing UserInterface
         return new DefaultUser(
             identity: (string) $user->getId(), // identity
-            roles: (array) $user->getRoles(),  // roles
-            details: [
-                'email' => (string) $user->getEmail(),
-                'id'    => (string) $user->getId(),
-                // more details?
-            ]
+            roles: (array) $user->getRolesNames(),  // roles
+            details: (array) $user->getDetails()
         );
     }
 }

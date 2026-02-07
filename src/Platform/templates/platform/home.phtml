@@ -1,0 +1,31 @@
+
+
+<!--div class="container-fluid">
+    <div class="row g-3">
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="ratio ratio-1x1">
+                <div class="bg-light rounded"></div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-lg-3">
+            <div class="ratio ratio-1x1">
+                <div class="bg-light rounded"></div>
+            </div>
+        </div>
+    </div>
+
+</div-->
+
+<div class="container-fluid m-0 p-0">
+    <div class="grid bg-white p-4">
+        <div class="g-col-12">
+            Neutrino SaaS Platform
+        <?php dump($this->user);?>
+        <?php if ($this->user): ?>
+            Hello <?= $this->escapeHtml($this->user->getIdentity()); ?>
+        <?php endif; ?>
+        </div>
+    </div>
+
+</div>
+

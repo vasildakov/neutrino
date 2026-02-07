@@ -13,6 +13,7 @@ $cacheConfig = [
 ];
 
 $aggregator = new ConfigAggregator([
+    \Laminas\Session\ConfigProvider::class,
     \Mezzio\Session\Ext\ConfigProvider::class,
     \Mezzio\Authentication\Session\ConfigProvider::class,
     \Mezzio\Session\ConfigProvider::class,
@@ -45,6 +46,7 @@ $aggregator = new ConfigAggregator([
     // Default App module config
     \Neutrino\ConfigProvider::class,
     \Dashboard\ConfigProvider::class,
+    \Platform\ConfigProvider::class,
 
 
     // Load application config in a pre-defined order in such a way that local settings

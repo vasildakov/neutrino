@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Security\Authorization;
 
 use Neutrino\Domain\User\Privilege;
@@ -17,17 +24,17 @@ readonly class AuthorizationService implements AuthorizationServiceInterface
         private AclProviderInterface $provider,
     ) {}
 
-    public function isAllowed(iterable $roles, Resource|string $resource, Privilege|string $privilege): bool
+    public function isAllowed(iterable $roles, string $resource, ?string $privilege = null): bool
     {
         $acl = $this->provider->getAcl();
 
-        $resourceId  = is_string($resource)  ? $resource  : $resource->name();
-        $privilegeId = is_string($privilege) ? $privilege : $privilege->name();
+//        $resourceId  = is_string($resource)  ? $resource  : $resource->name();
+//        $privilegeId = is_string($privilege) ? $privilege : $privilege->name();
 
         foreach ($roles as $role) {
             $roleId = is_string($role) ? $role : $role->name();
 
-            if ($acl->isAllowed($roleId, $resourceId, $privilegeId)) {
+            if ($acl->isAllowed($roleId, $resource, $privilege)) {
                 return true;
             }
         }
@@ -38,7 +45,7 @@ readonly class AuthorizationService implements AuthorizationServiceInterface
     /**
      * @param iterable<Role>|iterable<string> $roles
      */
-    public function assertAllowed(iterable $roles, Resource|string $resource, Privilege|string $privilege): void
+    public function assertAllowed(iterable $roles, string $resource, ?string $privilege = null): void
     {
         if (! $this->isAllowed($roles, $resource, $privilege)) {
             throw new \RuntimeException('Forbidden'); // replace it with your ForbiddenException

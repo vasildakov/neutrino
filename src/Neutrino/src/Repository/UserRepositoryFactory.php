@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Repository;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,7 +18,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-class UserRepositoryFactory
+final readonly class UserRepositoryFactory
 {
     /**
      * @throws ContainerExceptionInterface
@@ -17,17 +26,12 @@ class UserRepositoryFactory
      */
     public function __invoke(ContainerInterface $container): UserRepository
     {
-        /** @var EntityManagerInterface $em */
         $em = $container->get(EntityManagerInterface::class);
         assert($em instanceof EntityManagerInterface);
 
-        /** @var ClassMetadata $metadata */
         $metadata = $em->getClassMetadata(User::class);
         assert($metadata instanceof ClassMetadata);
 
-
-        $repository = new UserRepository($em, $metadata);
-
-        return $repository;
+        return new UserRepository($em, $metadata);
     }
 }

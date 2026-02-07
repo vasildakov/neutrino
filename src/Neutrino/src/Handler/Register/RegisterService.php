@@ -1,26 +1,38 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Handler\Register;
 
 use Doctrine\ORM\EntityManagerInterface;
 use InvalidArgumentException;
 use Neutrino\Domain\User\Email;
 use Neutrino\Domain\User\Password;
+use Neutrino\Domain\User\Role;
 use Neutrino\Domain\User\User;
 use Neutrino\Repository\UserRepository;
 
-final class RegisterService
+final readonly class RegisterService
 {
     public function __construct(
-        private readonly EntityManagerInterface $em
+        private EntityManagerInterface $em
     ) {
     }
 
+    /**
+     * @param RegisterInput $input
+     * @return User
+     */
     public function register(RegisterInput $input): User
     {
-        $email = new Email($input->email);
+        $email    = new Email($input->email);
         $password = new Password($input->password);
 
         /** @var UserRepository $repository */
@@ -30,7 +42,15 @@ final class RegisterService
             throw new InvalidArgumentException('Email already registered');
         }
 
+        $role = $this->em
+            ->getRepository(Role::class)
+            ->findOneBy([
+                'name'  => 'user',
+                'scope' => 'backoffice'
+            ]);
+
         $user = new User(email: $email, password: $password);
+        $user->addRole($role);
 
         $this->em->persist($user);
         $this->em->flush();

@@ -20,8 +20,8 @@
             <?php foreach ($this->results as $object): ?>
             <tr>
                 <td><input type="checkbox"></td>
-                <td><span class="">..</td>
-                <td><span class=""><i data-feather="database" width="18" height="18" class="align-middle text-muted me-1"></i> <?=$object->database;?></td>
+                <td><span class=""><?=$object->id;?></td>
+                <td><span class=""><?=$object->database;?></td>
                 <td><span class="badge text-bg-success rounded-1">OK</span></td>
                 <td><span class=""><?=$object->latency;?> ms</td>
                 <td><span class="">...</td>

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Neutrino\Handler\Login;
 
+use Laminas\Session\Container;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerInterface;
 

@@ -27,18 +27,11 @@
     </div><!-- sidebar-search -->
 
     <div class="sidebar-body">
-        <ul class="nav nav-sidebar">
+        <ul class="nav-sidebar">
             <li class="nav-item">
                 <a class="nav-link" href="#">
                     <i data-feather="airplay"></i>
                     <span>Dashboard</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a class="nav-link" href="#">
-                    <i data-feather="server"></i>
-                    <span class="ms-1">Servers</span>
                 </a>
             </li>
 
@@ -70,6 +63,20 @@
                 </a>
             </li>
 
+
+        </ul>
+
+        <hr>
+
+
+        <span class="group-label">System</span>
+        <ul class="nav-sidebar">
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i data-feather="server"></i>
+                    <span class="ms-1">Servers</span>
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link" href="<?= $this->url('dashboard.databases') ?>">
                     <i data-feather="database"></i>
@@ -84,6 +91,8 @@
                 </a>
             </li>
         </ul>
+
+
 
         <hr>
 

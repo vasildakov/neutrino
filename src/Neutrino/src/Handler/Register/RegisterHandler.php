@@ -1,7 +1,14 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Handler\Register;
 
 use Fig\Http\Message\StatusCodeInterface;
@@ -12,14 +19,14 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RegisterHandler implements RequestHandlerInterface
+readonly class RegisterHandler implements RequestHandlerInterface
 {
     // create an account in neutrino
     // and create a tenant database for the account
 
     public function __construct(
-        private readonly RegisterService $service,
-        private readonly PhpSession $auth
+        private RegisterService $service,
+        private PhpSession      $auth
     ) {
     }
 
@@ -44,7 +51,7 @@ class RegisterHandler implements RequestHandlerInterface
             $user = $this->service->register(
                 new RegisterInput(
                     (string) ($data['email'] ?? ''),
-                    (string) ($data['password'] ?? '')
+                    (string) ($data['password'] ?? ''),
                 )
             );
         } catch (InvalidArgumentException $e) {
@@ -57,11 +64,12 @@ class RegisterHandler implements RequestHandlerInterface
         // Auto-login
         $this->auth->authenticate($request);
 
+        // Redirect to the platform/dashboard
         return new JsonResponse(
             [
                 'success'  => true,
                 'message'   => 'Account created successfully.',
-                'redirect' => '/dashboard',
+                'redirect' => '/backoffice',
             ],
             StatusCodeInterface::STATUS_OK
         );

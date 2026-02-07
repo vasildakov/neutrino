@@ -2,11 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Dashboard\Service\Database;
+namespace Platform\Service\Database;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Exception;
+use Neutrino\Entity\Database;
 use Neutrino\Repository\DatabaseRepository;
 use PDO;
 
@@ -27,10 +28,8 @@ final class DatabaseStatsService implements DatabaseStatsServiceInterface
         $collection = new DatabaseStatsCollection();
 
         foreach ($this->databases->findAll() as $db) {
-            $collection->add($this->probe($db->name()));
+            $collection->add($this->probe($db));
         }
-
-        //$collection->add($this->probe('neutrino'));
 
         return $collection;
     }
@@ -38,16 +37,18 @@ final class DatabaseStatsService implements DatabaseStatsServiceInterface
     /**
      * @throws Exception
      */
-    private function probe(string $database): DatabaseStats
+    private function probe(Database $database): DatabaseStats
     {
+        $id      = $database->id();
+        $name    = $database->name();
         $size    = $this->size($database);
         $latency = $this->latency($database);
-        return new DatabaseStats($database, $size, $latency);
+        return new DatabaseStats((string) $id, $name, $size, $latency);
     }
 
-    private function size(string $database): ?float
+    private function size(Database $database): ?float
     {
-        $connection = $this->getConnection($database);
+        $connection = $this->getConnection($database->name());
         $qb = $connection->createQueryBuilder();
 
         $qb->select('ROUND(SUM(t.data_length + t.index_length) / 1024 / 1024, 2) AS size_mb')
@@ -62,11 +63,11 @@ final class DatabaseStatsService implements DatabaseStatsServiceInterface
     /**
      * @throws Exception
      */
-    private function latency(string $database): int
+    private function latency(Database $database): int
     {
         $startedAt = microtime(true);
 
-        $connection = $this->getConnection($database);
+        $connection = $this->getConnection($database->name());
         $connection->executeQuery('SELECT 1')->fetchOne();
 
         return (int) round((microtime(true) - $startedAt) * 1000);

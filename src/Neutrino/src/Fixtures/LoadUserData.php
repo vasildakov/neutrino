@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Neutrino\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Neutrino\Domain\User\Email;
@@ -12,9 +13,8 @@ use Neutrino\Domain\User\Password;
 use Neutrino\Domain\User\Role;
 use Neutrino\Domain\User\User;
 
-class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
+class LoadUserData extends AbstractFixture implements DependentFixtureInterface
 {
-
     public function load(ObjectManager $manager): void
     {
         foreach ($this->getData() as $userData) {
@@ -22,6 +22,10 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
                 new Email($userData['email']),
                 new Password($userData['password'])
             );
+            if (isset($userData['avatar'])) {
+                $user->setAvatar($userData['avatar']);
+            }
+
             $manager->persist($user);
             foreach ($userData['roles'] as $role) {
                 $user->addRole($this->getReference($role, Role::class));
@@ -43,23 +47,30 @@ class LoadUserData extends AbstractFixture implements OrderedFixtureInterface
             [
                 'email' => 'vasildakov@gmail.com',
                 'password' => '1',
-                'roles' => ['owner', 'administrator'],
+                'avatar' => '/uploads/vasil.jpg',
+                'roles' => ['owner-platform', 'administrator-platform'],
             ],
             [
                 'email' => 'stanislava.dakova@gmail.com',
                 'password' => '1',
-                'roles' => ['owner', 'administrator'],
+                'avatar' => '/uploads/stanislava.jpg',
+                'roles' => ['owner-platform', 'administrator-platform'],
             ],
             [
                 'email' => 'manager1@neutrino.bg',
                 'password' => '1',
-                'roles' => ['manager'],
+                'roles' => ['manager-platform'],
             ],
             [
                 'email' => 'manager2@neutrino.bg',
                 'password' => '1',
-                'roles' => ['manager'],
+                'roles' => ['manager-platform'],
             ]
         ];
+    }
+
+    public function getDependencies(): array
+    {
+        return [LoadRoleData::class];
     }
 }

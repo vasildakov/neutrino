@@ -64,6 +64,7 @@
         "laminas/laminas-permissions-acl": "^2.18",
         "laminas/laminas-permissions-rbac": "^3.8",
         "laminas/laminas-servicemanager": "^3.22",
+        "laminas/laminas-session": "^2.26",
         "laminas/laminas-stdlib": "^3.21",
         "mezzio/mezzio": "^3.23.1",
         "mezzio/mezzio-authentication": "^1.12",
@@ -104,7 +105,8 @@
     "autoload": {
         "psr-4": {
             "Neutrino\\": "src/Neutrino/src/",
-            "Dashboard\\": "src/Dashboard/src/"
+            "Dashboard\\": "src/Dashboard/src/",
+            "Platform\\": "src/Platform/src/"
         }
     },
     "autoload-dev": {

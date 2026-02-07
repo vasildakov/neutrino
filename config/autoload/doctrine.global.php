@@ -45,16 +45,16 @@ return [
             'orm_default' => [
                 'class' => MappingDriverChain::class,
                 'drivers' => [
-                    'App\Entity'         => 'app_entity',
-                    'Neutrino\\Entity'   => 'neutrino_entity',
-                    'Neutrino\Domain'    => 'neutrino_domain_attributes',
+                    'App\\Entity'         => 'app_entity',
+                    'Neutrino\\Entity'    => 'neutrino_entity_attributes',
+                    'Neutrino\\Domain'    => 'neutrino_domain_attributes',
                 ],
             ],
             'neutrino_domain_attributes' => [
                 'class' => \Doctrine\ORM\Mapping\Driver\AttributeDriver::class,
                 'paths' => [__DIR__ . '/../../src/Neutrino/src/Domain'],
             ],
-            'neutrino_entity' => [
+            'neutrino_entity_attributes' => [
                 'class' => \Doctrine\ORM\Mapping\Driver\AttributeDriver::class,
                 'paths' => [
                     __DIR__ . '/../../src/Neutrino/src/Entity',

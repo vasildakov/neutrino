@@ -1,14 +1,16 @@
 <?php
 
-namespace Dashboard\Handler;
+declare(strict_types=1);
 
-use Dashboard\Service\Database\DatabaseStatsService;
-use Dashboard\Service\Database\DatabaseStatsServiceInterface;
+namespace Platform\Handler;
+
 use Doctrine\DBAL\Connection;
 use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Neutrino\Entity\Database;
 use Neutrino\Repository\DatabaseRepository;
+use Platform\Service\Database\DatabaseStatsService;
+use Platform\Service\Database\DatabaseStatsServiceInterface;
 use Psr\Container\ContainerInterface;
 
 class ShowDatabasesHandlerFactory

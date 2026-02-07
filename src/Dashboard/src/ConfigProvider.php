@@ -24,10 +24,6 @@ class ConfigProvider
         return [
             'factories' => [
                 HomeHandler::class => HomeHandlerFactory::class,
-                ShowDatabasesHandler::class => ShowDatabasesHandlerFactory::class,
-
-                // Services
-                Service\Database\DatabaseStatsService::class => Service\Database\DatabaseStatsServiceFactory::class,
             ]
         ];
     }

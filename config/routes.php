@@ -12,6 +12,7 @@ return static function (
     MiddlewareFactory $factory,
     ContainerInterface $container
 ): void {
+    // mezzio
     $app->get('/', Handler\HomePageHandler::class, 'home');
     $app->get('/api/ping', Handler\PingHandler::class, 'api.ping');
 
@@ -22,9 +23,11 @@ return static function (
     // login
     $app->get('/login', Handler\Login\LoginFormHandler::class, 'login.form');
     $app->post('/login', Handler\Login\LoginHandler::class, 'login.submit');
+    $app->get('/logout', Handler\LogoutHandler::class, 'logout');
 
-
-    $app->get('/dashboard', \Dashboard\Handler\HomeHandler::class, 'dashboard.home');
-    $app->get('/dashboard/databases', \Dashboard\Handler\ShowDatabasesHandler::class, 'dashboard.databases');
+    // saas platform
+    $app->get('/platform', \Platform\Handler\HomeHandler::class, 'platform.home');
+    $app->get('/platform/databases', \Platform\Handler\ShowDatabasesHandler::class, 'platform.databases');
+    $app->get('/platform/accounts', \Platform\Handler\ListAccounts::class, 'platform.accounts');
 
 };
