@@ -11,10 +11,16 @@ declare(strict_types=1);
  */
 namespace Neutrino\Security\Authorization;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 final class AuthorizationServiceFactory
 {
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __invoke(ContainerInterface $container): AuthorizationService
     {
         $acl = $container->get(AclProviderInterface::class);

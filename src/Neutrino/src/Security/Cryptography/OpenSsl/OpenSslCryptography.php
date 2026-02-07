@@ -1,10 +1,29 @@
 <?php
 
+declare(strict_types=1);
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Security\Cryptography\OpenSsl;
 
 use Neutrino\Security\Cryptography\CryptographyInterface;
 use Random\RandomException;
 use RuntimeException;
+
+use function base64_decode;
+use function base64_encode;
+use function openssl_decrypt;
+use function openssl_encrypt;
+use function random_bytes;
+use function strlen;
+use function substr;
+
+use const OPENSSL_RAW_DATA;
 
 final readonly class OpenSslCryptography implements CryptographyInterface
 {
@@ -64,7 +83,7 @@ final readonly class OpenSslCryptography implements CryptographyInterface
             OPENSSL_RAW_DATA,
             $iv,
             $tag,
-            '' // AAD (must match encrypt if you use it)
+            '' // AAD (must match encrypting if you use it)
         );
 
         if ($plain === false) {

@@ -1,13 +1,23 @@
 <?php
 
 declare(strict_types=1);
-
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 namespace Neutrino\Queue;
 
 use JsonException;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\Values\Job as PheanstalkJob;
 use Pheanstalk\Values\TubeName;
+use function json_decode;
+use function json_encode;
+use const JSON_THROW_ON_ERROR;
 
 final class BeanstalkdQueue implements QueueInterface
 {
