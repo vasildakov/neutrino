@@ -20,7 +20,7 @@ return static function (
     $app->get('/register', Handler\Register\RegisterFormHandler::class,'register.form');
     $app->post('/register', Handler\Register\RegisterHandler::class,'register.submit');
 
-    // login
+    // login/logout
     $app->get('/login', Handler\Login\LoginFormHandler::class, 'login.form');
     $app->post('/login', Handler\Login\LoginHandler::class, 'login.submit');
     $app->get('/logout', Handler\LogoutHandler::class, 'logout');
