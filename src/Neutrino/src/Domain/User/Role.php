@@ -27,7 +27,7 @@ use Ramsey\Uuid\UuidInterface;
 )]
 class Role implements RoleInterface
 {
-    public const SCOPE_PLATFORM = 'platform';
+    public const SCOPE_PLATFORM  = 'platform';
     public const SCOPE_DASHBOARD = 'dashboard';
 
 
@@ -45,7 +45,7 @@ class Role implements RoleInterface
     protected UuidInterface|string $id;
 
 
-    #[ORM\Column(type: 'string', length: 64, unique: true)]
+    #[ORM\Column(type: 'string', length: 64)]
     private string $name;
 
     #[ORM\Column(type: 'string', length: 32)]

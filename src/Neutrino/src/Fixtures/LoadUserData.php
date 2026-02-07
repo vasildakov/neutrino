@@ -19,8 +19,10 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
     {
         foreach ($this->getData() as $userData) {
             $user = new User(
-                new Email($userData['email']),
-                new Password($userData['password'])
+                email: new Email($userData['email']),
+                password: new Password($userData['password']),
+                name: $userData['name'],
+                surname: $userData['surname']
             );
             if (isset($userData['avatar'])) {
                 $user->setAvatar($userData['avatar']);
@@ -47,22 +49,30 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
             [
                 'email' => 'vasildakov@gmail.com',
                 'password' => '1',
+                'name' => 'Vasil',
+                'surname' => 'Dakov',
                 'avatar' => '/uploads/vasil.jpg',
                 'roles' => ['owner-platform', 'administrator-platform'],
             ],
             [
                 'email' => 'stanislava.dakova@gmail.com',
                 'password' => '1',
+                'name' => 'Stanislava',
+                'surname' => 'Dakova',
                 'avatar' => '/uploads/stanislava.jpg',
                 'roles' => ['owner-platform', 'administrator-platform'],
             ],
             [
-                'email' => 'manager1@neutrino.bg',
+                'email' => 'john.doe@neutrino.bg',
                 'password' => '1',
+                'name' => 'John',
+                'surname' => 'Doe',
                 'roles' => ['manager-platform'],
             ],
             [
-                'email' => 'manager2@neutrino.bg',
+                'email' => 'bill.gates@neutrino.bg',
+                'name' => 'Bill',
+                'surname' => 'Gates',
                 'password' => '1',
                 'roles' => ['manager-platform'],
             ]

@@ -32,8 +32,9 @@ class User implements UserInterface
     #[ORM\CustomIdGenerator(class: UuidGenerator::class)]
     protected UuidInterface|string $id;
 
-    #[ORM\Column(type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $avatar = null;
+
 
     /**
      * @var Collection<int, UserRole>
@@ -50,6 +51,12 @@ class User implements UserInterface
 
         #[ORM\Column(name: 'password', type: 'password', length: 255, nullable: false,)]
         private readonly Password $password,
+
+        #[ORM\Column(name: 'name', type: Types::STRING, length: 255, nullable: true)]
+        private ?string $name = null,
+
+        #[ORM\Column(name: 'surname', type: Types::STRING, length: 255, nullable: true)]
+        private ?string $surname = null,
     ) {
         $this->id = Uuid::uuid4();
         $this->roles = new ArrayCollection();
@@ -63,9 +70,7 @@ class User implements UserInterface
 
     public function getShortId(): string
     {
-
         return substr($this->id->getHex()->toString(), 0, 8);
-
     }
 
     /**
@@ -78,7 +83,21 @@ class User implements UserInterface
 
     public function getName(): string
     {
-        return '';
+        return $this->name ?? '';
+    }
+
+    /**
+     * @return string
+     */
+    public function getSurname(): string
+    {
+        return $this->surname ?? '';
+    }
+
+
+    public function getFullName(): string
+    {
+        return $this->getName() . ' ' . $this->getSurname();
     }
 
     /**
@@ -185,6 +204,7 @@ class User implements UserInterface
         return [
             'id'       => (string) $this->getId(),
             'email'    => (string) $this->getEmail(),
+            'name'     => $this->getFullName(),
             'scope'    => $this->getScope(),
             'platform' => $this->hasPlatformRole(),
             'avatar'   => $this->getAvatar(),

@@ -7,8 +7,6 @@
 /vendor/
 .idea
 .env
-/src/Doctrine/
-/src/Doctrine/build/
 public/uploads/
 public/css
 public/assets

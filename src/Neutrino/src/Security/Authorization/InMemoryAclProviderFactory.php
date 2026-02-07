@@ -20,14 +20,22 @@ class InMemoryAclProviderFactory
     {
         $acl = new Acl();
 
-        $acl->addRole('administrator');
+        $acl->addRole('manager');
+        $acl->addRole('administrator', 'manager');
         $acl->addRole('owner', 'administrator');
+
 
         $acl->addResource('platform.home');
         $acl->addResource('platform.accounts');
+        $acl->addResource('platform.databases');
+
+
+        $acl->allow('manager', 'platform.home');
+
 
         $acl->allow('administrator', 'platform.home', null);
         $acl->allow('administrator', 'platform.accounts', null);
+        $acl->allow('administrator', 'platform.databases', null);
 
         return new InMemoryAclProvider($acl);
     }

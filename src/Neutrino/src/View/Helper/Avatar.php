@@ -23,6 +23,6 @@ final class Avatar
             return $user['details']['avatar'];
         }
 
-        return '/img/avatar-placeholder.svg';
+        return '/uploads/avatar.png';
     }
 }

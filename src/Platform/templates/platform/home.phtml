@@ -22,7 +22,7 @@
             Neutrino SaaS Platform
         <?php dump($this->user);?>
         <?php if ($this->user): ?>
-            Hello <?= $this->escapeHtml($this->user->getIdentity()); ?>
+            Hello <b><?= $this->escapeHtml($this->user->getDetail('name')); ?></b> !
         <?php endif; ?>
         </div>
     </div>

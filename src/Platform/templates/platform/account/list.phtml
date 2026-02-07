@@ -1,6 +1,6 @@
 <div class="container-fluid">
 
-    <div class="row">
+    <div class="row p-4 bg-white">
         <div class="col-12">
             <h1 class="h4">Accounts</h1>
             <table class="table table-striped">
@@ -9,7 +9,9 @@
                     <th>ID</th>
                     <th>Name</th>
                     <th>Email</th>
+                    <th>Roles</th>
                     <th>Created At</th>
+                    <th>Action</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -17,9 +19,11 @@
                 <?php foreach ($this->users as $account): ?>
                     <tr>
                         <td><?= $account->getShortId() ?></td>
-                        <td><?= $account->getName() ?></td>
+                        <td><?= $account->getFullName() ?></td>
                         <td><?= $account->getEmail() ?></td>
+                        <td><?= implode(', ', $account->getRoles()->toArray()) ?></td>
                         <td><?= $account->getCreatedAt()->format('Y-m-d h:i:s'); ?></td>
+                        <td>Action</td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
