@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,12 +10,15 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\Domain\Account;
 
 use DateTimeImmutable;
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Neutrino\Domain\Billing\Subscription;
+use Neutrino\Domain\Payment\Payment;
 use Neutrino\Domain\Store\Store;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\UuidInterface;
@@ -30,12 +34,29 @@ class Account
     protected UuidInterface|string $id;
 
     /** @var Collection<int, AccountMembership> */
-    #[ORM\OneToMany(targetEntity: AccountMembership::class, mappedBy: 'account', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: AccountMembership::class,
+        mappedBy: 'account',
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
     private Collection $memberships;
 
     /** @var Collection<int, Store> */
-    #[ORM\OneToMany(targetEntity: Store::class, mappedBy: 'account', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OneToMany(
+        targetEntity: Store::class,
+        mappedBy: 'account',
+        cascade: ['persist'],
+        orphanRemoval: true
+    )]
     private Collection $stores;
+
+    /** @var Collection<int, Payment> */
+    #[ORM\OneToMany(targetEntity: Payment::class, mappedBy: 'account')]
+    private Collection $payments;
+
+    #[ORM\OneToOne(targetEntity: Subscription::class, mappedBy: 'account')]
+    private ?Subscription $subscription = null;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private DateTimeImmutable $createdAt;
@@ -49,8 +70,7 @@ class Account
         $this->createdAt   = new DateTimeImmutable();
     }
 
-
-    public function id(): AccountId
+    public function id(): UuidInterface|string
     {
         return $this->id;
     }
@@ -66,25 +86,54 @@ class Account
         return $this->stores->toArray();
     }
 
-    public function addStore(Store $store): void
-    {
-        if ($store->accountId()->value !== $this->id->value) {
-            throw new \DomainException('Store must belong to this account.');
-        }
-
-        if (!$this->stores->contains($store)) {
-            $this->stores->add($store);
-        }
-    }
-
     public function addMembership(AccountMembership $membership): void
     {
-        if ($membership->accountId()->value !== $this->id->value) {
-            throw new \DomainException('Membership must belong to this account.');
-        }
+        $this->memberships->add($membership);
+    }
 
-        if (!$this->memberships->contains($membership)) {
-            $this->memberships->add($membership);
-        }
+    public function cancelMembership(AccountMembership $membership): void
+    {
+        $this->memberships->removeElement($membership);
+    }
+
+    public function addStore(Store $store): void
+    {
+        $this->stores->add($store);
+    }
+
+    public function removeStore(Store $store): void
+    {
+        $this->stores->removeElement($store);
+    }
+
+    /**
+     * @return Collection<int, Store>
+     */
+    public function getStores(): Collection
+    {
+        return $this->stores;
+    }
+
+    public function createdAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function subscription(): ?Subscription
+    {
+        return $this->subscription;
+    }
+
+    public function setSubscription(?Subscription $subscription): void
+    {
+        $this->subscription = $subscription;
+    }
+
+    /**
+     * @return Collection<int, Payment>
+     */
+    public function payments(): Collection
+    {
+        return $this->payments;
     }
 }

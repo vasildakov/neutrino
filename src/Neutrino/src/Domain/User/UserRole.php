@@ -30,7 +30,7 @@ class UserRole
     #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
     private User $user;
 
-    #[ORM\ManyToOne(targetEntity: Role::class, inversedBy: 'users')]
+    #[ORM\ManyToOne(targetEntity: Role::class, cascade: ['persist'], inversedBy: 'users')]
     #[ORM\JoinColumn(name: 'role_id', referencedColumnName: 'id', nullable: false, onDelete: 'RESTRICT')]
     private Role $role;
 
@@ -64,5 +64,4 @@ class UserRole
     {
         return $this->role;
     }
-
 }

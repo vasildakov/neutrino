@@ -17,6 +17,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Mezzio\Authentication\UserInterface;
+use Neutrino\Domain\Account\Account;
+use Neutrino\Domain\Account\AccountMembership;
 use Neutrino\Repository\UserRepository;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
 use Ramsey\Uuid\Uuid;
@@ -35,12 +37,23 @@ class User implements UserInterface
     #[ORM\Column(type: Types::STRING, length: 255, nullable: true)]
     private ?string $avatar = null;
 
-
     /**
      * @var Collection<int, UserRole>
      */
     #[ORM\OneToMany(targetEntity: UserRole::class, mappedBy: 'user', cascade: ['persist'], orphanRemoval: true)]
     private Collection $roles;
+
+    /**
+     * @var Collection<int, AccountMembership>
+     */
+    #[ORM\OneToMany(targetEntity: AccountMembership::class, mappedBy: 'user', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $accountMemberships;
+
+    /**
+     * @var Collection<int, UserActivity>
+     */
+    #[ORM\OneToMany(targetEntity: UserActivity::class, mappedBy: 'user', cascade: ['persist'], orphanRemoval: true)]
+    private Collection $activities;
 
     #[ORM\Column(name: 'createdAt', type: Types::DATETIME_IMMUTABLE, nullable: false,)]
     private DateTimeImmutable $createdAt;
@@ -60,6 +73,8 @@ class User implements UserInterface
     ) {
         $this->id = Uuid::uuid4();
         $this->roles = new ArrayCollection();
+        $this->accountMemberships = new ArrayCollection();
+        $this->activities = new ArrayCollection();
         $this->createdAt = new DateTimeImmutable();
     }
 
@@ -156,8 +171,8 @@ class User implements UserInterface
         }
     }
 
-    /**
-     * @return Role[]
+    /*
+     * @return iterable<Role>
      */
     public function getRoles(): iterable
     {
@@ -197,7 +212,7 @@ class User implements UserInterface
     }
 
     /**
-     * @return array
+     * @return array<string, mixed>
      */
     public function getDetails(): array
     {
@@ -211,10 +226,50 @@ class User implements UserInterface
         ];
     }
 
+    /**
+     * @return array<int, string>
+     */
     public function getRolesNames(): array
     {
         return $this->roles->map(
             fn(UserRole $userRole) => $userRole->getRole()->name()
         )->toArray();
     }
+
+    public function addAccountMembership(AccountMembership $accountMembership): void
+    {
+        $this->accountMemberships->add($accountMembership);
+    }
+
+    /**
+     * @return list<Account>
+     */
+    public function getAccounts(): array
+    {
+        return $this->accountMemberships
+            ->map(static fn(AccountMembership $membership) => $membership->account())
+            ->toArray();
+    }
+
+    /**
+     * @return Collection<int, AccountMembership>
+     */
+    public function getAccountMemberships(): Collection
+    {
+        return $this->accountMemberships;
+    }
+
+    public function hasAccountMemberships(): bool
+    {
+        return !$this->accountMemberships->isEmpty();
+    }
+
+    /**
+     * @return Collection<int, UserActivity>
+     */
+    public function getActivities(): Collection
+    {
+        return $this->activities;
+    }
+
 }

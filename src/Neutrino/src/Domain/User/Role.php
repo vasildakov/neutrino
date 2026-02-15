@@ -170,4 +170,13 @@ class Role implements RoleInterface
     {
         return $this->name;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'id' => (string) $this->id,
+            'name' => $this->name,
+            'scope' => $this->scope,
+        ];
+    }
 }

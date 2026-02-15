@@ -29,7 +29,7 @@ class AccountMembership
         private Account $account,
 
         #[ORM\Id]
-        #[ORM\ManyToOne(targetEntity: User::class)]
+        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'accountMemberships')]
         #[ORM\JoinColumn(name: 'user_id', referencedColumnName: 'id', nullable: false, onDelete: 'CASCADE')]
         private User $user,
 
@@ -44,18 +44,23 @@ class AccountMembership
         return new self($account, $user, AccountRole::Owner);
     }
 
-    public function accountId(): AccountId
+    public function account(): Account
     {
-        return $this->account->id();
+        return $this->account;
     }
 
-    public function userId(): UserId
+    public function user(): User
     {
-        return $this->user->id();
+        return $this->user;
     }
 
     public function role(): AccountRole
     {
         return $this->role;
+    }
+
+    public function createdAt(): DateTimeImmutable
+    {
+        return $this->createdAt;
     }
 }
