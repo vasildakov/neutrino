@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,20 +10,23 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Neutrino\Queue;
 
-use Pheanstalk\Values\Job as PheanstalkJob;
+namespace Neutrino\Queue\RabbitMQ;
 
-final class BeanstalkdJob implements JobInterface
+use Neutrino\Queue\JobInterface;
+use PhpAmqpLib\Message\AMQPMessage;
+
+final class RabbitMqJob implements JobInterface
 {
     public function __construct(
-        private readonly PheanstalkJob $job,
+        private readonly AMQPMessage $message,
         private readonly array $payload
-    ) {}
+    ) {
+    }
 
     public function getId(): string
     {
-        return (string) $this->job->getId();
+        return (string) ($this->message->get('message_id') ?? '');
     }
 
     public function getPayload(): array
@@ -30,8 +34,8 @@ final class BeanstalkdJob implements JobInterface
         return $this->payload;
     }
 
-    public function nativeJob(): PheanstalkJob
+    public function getMessage(): AMQPMessage
     {
-        return $this->job;
+        return $this->message;
     }
 }

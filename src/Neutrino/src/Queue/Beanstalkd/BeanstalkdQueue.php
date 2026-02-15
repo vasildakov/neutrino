@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,14 +10,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Neutrino\Queue;
 
+namespace Neutrino\Queue\Beanstalkd;
+
+use InvalidArgumentException;
 use JsonException;
+use Neutrino\Queue\JobInterface;
+use Neutrino\Queue\QueueInterface;
 use Pheanstalk\Pheanstalk;
 use Pheanstalk\Values\Job as PheanstalkJob;
 use Pheanstalk\Values\TubeName;
+
 use function json_decode;
 use function json_encode;
+
 use const JSON_THROW_ON_ERROR;
 
 final class BeanstalkdQueue implements QueueInterface
@@ -43,7 +50,6 @@ final class BeanstalkdQueue implements QueueInterface
         $this->client->useTube(new TubeName($queue));
         $this->client->put(json_encode($payload, JSON_THROW_ON_ERROR));
     }
-
 
     /**
      * @throws JsonException
@@ -80,10 +86,10 @@ final class BeanstalkdQueue implements QueueInterface
         $this->client->bury($nativeJob);
     }
 
-    private function native(JobInterface $job): \Pheanstalk\Values\Job
+    private function native(JobInterface $job): PheanstalkJob
     {
         if (! $job instanceof BeanstalkdJob) {
-            throw new \InvalidArgumentException('Expected BeanstalkdJob.');
+            throw new InvalidArgumentException('Expected BeanstalkdJob.');
         }
 
         return $job->nativeJob();

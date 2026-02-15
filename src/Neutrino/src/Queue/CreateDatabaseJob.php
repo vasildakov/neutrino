@@ -11,27 +11,23 @@ declare(strict_types=1);
  */
 namespace Neutrino\Queue;
 
-use PhpAmqpLib\Message\AMQPMessage;
-
-final class RabbitMqJob implements JobInterface
+final class CreateDatabaseJob implements JobInterface
 {
     public function __construct(
-        private readonly AMQPMessage $message,
-        private readonly array $payload
+        private readonly string $id,
+        private readonly CreateDatabasePayload $payload
     ) {}
 
     public function getId(): string
     {
-        return (string) ($this->message->get('message_id') ?? '');
+        return $this->id;
     }
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getPayload(): array
     {
-        return $this->payload;
-    }
-
-    public function getMessage(): AMQPMessage
-    {
-        return $this->message;
+        return $this->payload->toArray();
     }
 }

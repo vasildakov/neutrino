@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,23 +10,30 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-namespace Neutrino\Queue;
 
+namespace Neutrino\Queue\RabbitMQ;
+
+use InvalidArgumentException;
 use JsonException;
+use Neutrino\Queue\JobInterface;
+use Neutrino\Queue\QueueInterface;
 use PhpAmqpLib\Channel\AMQPChannel;
 use PhpAmqpLib\Message\AMQPMessage;
 
 use function json_decode;
 use function json_encode;
+
 use const JSON_THROW_ON_ERROR;
 
 final readonly class RabbitMqQueue implements QueueInterface
 {
     public function __construct(
         private AMQPChannel $channel
-    ) {}
+    ) {
+    }
 
     /**
+     * @param array<string, mixed> $payload
      * @throws JsonException
      */
     public function push(string $queue, array $payload): void
@@ -59,16 +67,25 @@ final readonly class RabbitMqQueue implements QueueInterface
 
     public function ack(JobInterface $job): void
     {
-        /** @var RabbitMqJob $job */
-        $this->channel->basic_ack($job->getMessage()->getDeliveryTag());
+        $nativeJob = $this->native($job);
+        $this->channel->basic_ack($nativeJob->getMessage()->getDeliveryTag());
     }
 
     public function reject(JobInterface $job, bool $requeue = false): void
     {
-        /** @var RabbitMqJob $job */
+        $nativeJob = $this->native($job);
         $this->channel->basic_reject(
-            $job->getMessage()->getDeliveryTag(),
+            $nativeJob->getMessage()->getDeliveryTag(),
             $requeue
         );
+    }
+
+    private function native(JobInterface $job): RabbitMqJob
+    {
+        if (! $job instanceof RabbitMqJob) {
+            throw new InvalidArgumentException('Expected RabbitMqJob.');
+        }
+
+        return $job;
     }
 }

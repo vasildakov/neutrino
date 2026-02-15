@@ -15,5 +15,8 @@ interface JobInterface
 {
     public function getId(): string;
 
+    /**
+     * @return array<string, mixed>
+     */
     public function getPayload(): array;
 }
