@@ -11,26 +11,26 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Neutrino\Handler\Register;
+namespace Neutrino\Handler\Consent;
 
-use Mezzio\Template\TemplateRendererInterface;
+use Doctrine\ORM\EntityManagerInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
 use function assert;
 
-class RegisterFormHandlerFactory
+final class ConsentConfigHandlerFactory
 {
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): RegisterFormHandler
+    public function __invoke(ContainerInterface $container): ConsentConfigHandler
     {
-        $template = $container->get(TemplateRendererInterface::class);
-        assert($template instanceof TemplateRendererInterface);
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
 
-        return new RegisterFormHandler($template);
+        return new ConsentConfigHandler($em);
     }
 }

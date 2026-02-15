@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,6 +10,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\Handler\Register;
 
 use Fig\Http\Message\StatusCodeInterface;
@@ -19,6 +21,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
+use function is_array;
+
 readonly class RegisterHandler implements RequestHandlerInterface
 {
     // create an account in neutrino
@@ -26,7 +30,7 @@ readonly class RegisterHandler implements RequestHandlerInterface
 
     public function __construct(
         private RegisterService $service,
-        private PhpSession      $auth
+        private PhpSession $auth
     ) {
     }
 
@@ -40,7 +44,7 @@ readonly class RegisterHandler implements RequestHandlerInterface
         }
 
         $data = $request->getParsedBody();
-        if (!is_array($data)) {
+        if (! is_array($data)) {
             return new JsonResponse(
                 ['error' => 'Invalid request body'],
                 StatusCodeInterface::STATUS_BAD_REQUEST
@@ -68,7 +72,7 @@ readonly class RegisterHandler implements RequestHandlerInterface
         return new JsonResponse(
             [
                 'success'  => true,
-                'message'   => 'Account created successfully.',
+                'message'  => 'Account created successfully.',
                 'redirect' => '/backoffice',
             ],
             StatusCodeInterface::STATUS_OK

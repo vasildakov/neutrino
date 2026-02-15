@@ -11,26 +11,31 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Neutrino\Handler\Register;
+namespace Neutrino\Handler\Cart;
 
 use Mezzio\Template\TemplateRendererInterface;
+use Neutrino\Service\Cart\CartService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 use function assert;
 
-class RegisterFormHandlerFactory
+class ViewCartHandlerFactory
 {
     /**
      * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): RegisterFormHandler
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
         $template = $container->get(TemplateRendererInterface::class);
         assert($template instanceof TemplateRendererInterface);
 
-        return new RegisterFormHandler($template);
+        $cartService = $container->get(CartService::class);
+        assert($cartService instanceof CartService);
+
+        return new ViewCartHandler($template, $cartService);
     }
 }

@@ -11,26 +11,36 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Neutrino\Handler\Register;
+namespace Neutrino\Handler\Checkout;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 use function assert;
 
-class RegisterFormHandlerFactory
+final class CheckoutSuccessHandlerFactory
 {
     /**
-     * @throws ContainerExceptionInterface
      * @throws NotFoundExceptionInterface
+     * @throws ContainerExceptionInterface
      */
-    public function __invoke(ContainerInterface $container): RegisterFormHandler
+    public function __invoke(ContainerInterface $container): RequestHandlerInterface
     {
+        $router = $container->get(RouterInterface::class);
+        assert($router instanceof RouterInterface);
+
+        $em = $container->get(EntityManagerInterface::class);
+        assert($em instanceof EntityManagerInterface);
+
         $template = $container->get(TemplateRendererInterface::class);
         assert($template instanceof TemplateRendererInterface);
 
-        return new RegisterFormHandler($template);
+        return new CheckoutSuccessHandler($router, $em, $template);
     }
 }
+
