@@ -64,6 +64,15 @@ class LoadDatabaseData extends AbstractFixture implements OrderedFixtureInterfac
                 'database' => 'customer3_database',
                 'driver' => 'pdo_mysql',
             ],
+            [
+                'name' => 'demo_db',
+                'host' => 'localhost',
+                'port' => 3306,
+                'username' => 'demo_user',
+                'password' => 'demo_pass',
+                'database' => 'demo_db',
+                'driver' => 'pdo_mysql',
+            ],
         ];
     }
 }

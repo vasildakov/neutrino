@@ -1,16 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neutrino\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Neutrino\Domain\User\Role;
-use Neutrino\Domain\User\RoleScope;
 
 class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface
 {
-
     public function load(ObjectManager $manager): void
     {
         $repo = $manager->getRepository(Role::class);
@@ -39,7 +39,7 @@ class LoadRoleData extends AbstractFixture implements OrderedFixtureInterface
         return 1;
     }
 
-    public function getData():array
+    public function getData(): array
     {
         return [
             ['name' => 'user', 'scope' => 'platform'],

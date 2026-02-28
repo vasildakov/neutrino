@@ -6,7 +6,6 @@ namespace Neutrino\Fixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\Common\DataFixtures\OrderedFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Neutrino\Domain\User\Email;
 use Neutrino\Domain\User\Password;
@@ -43,39 +42,42 @@ class LoadUserData extends AbstractFixture implements DependentFixtureInterface
         return 2;
     }
 
+    /**
+     * @return array<string, array<string, mixed>>
+     */
     public function getData(): array
     {
         return [
             [
-                'email' => 'vasildakov@gmail.com',
+                'email'    => 'vasildakov@gmail.com',
                 'password' => '1',
-                'name' => 'Vasil',
-                'surname' => 'Dakov',
-                'avatar' => '/uploads/vasil.jpg',
-                'roles' => ['owner-platform', 'administrator-platform'],
+                'name'     => 'Vasil',
+                'surname'  => 'Dakov',
+                'avatar'   => '/uploads/vasil.jpg',
+                'roles'    => ['owner-platform', 'administrator-platform'],
             ],
             [
-                'email' => 'stanislava.dakova@gmail.com',
+                'email'    => 'stanislava.dakova@gmail.com',
                 'password' => '1',
-                'name' => 'Stanislava',
-                'surname' => 'Dakova',
-                'avatar' => '/uploads/stanislava.jpg',
-                'roles' => ['owner-platform', 'administrator-platform'],
+                'name'     => 'Stanislava',
+                'surname'  => 'Dakova',
+                'avatar'   => '/uploads/stanislava.jpg',
+                'roles'    => ['owner-platform', 'administrator-platform'],
             ],
             [
-                'email' => 'john.doe@neutrino.bg',
+                'email'    => 'john.doe@neutrino.bg',
                 'password' => '1',
-                'name' => 'John',
-                'surname' => 'Doe',
-                'roles' => ['manager-platform'],
+                'name'     => 'John',
+                'surname'  => 'Doe',
+                'roles'    => ['manager-platform'],
             ],
             [
-                'email' => 'bill.gates@neutrino.bg',
-                'name' => 'Bill',
-                'surname' => 'Gates',
+                'email'    => 'bill.gates@neutrino.bg',
+                'name'     => 'Bill',
+                'surname'  => 'Gates',
                 'password' => '1',
-                'roles' => ['manager-platform'],
-            ]
+                'roles'    => ['manager-platform'],
+            ],
         ];
     }
 
