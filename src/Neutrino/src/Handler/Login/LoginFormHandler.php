@@ -20,18 +20,26 @@ use Neutrino\Mail\SendTestEmail;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 
-class LoginFormHandler implements RequestHandlerInterface
+final class LoginFormHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private TemplateRendererInterface $template,
-        private SendTestEmail $sendTestEmail
+        private readonly TemplateRendererInterface $template,
+        private readonly SendTestEmail $sendTestEmail
     ) {
+        $this->logger = new NullLogger();
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $this->sendTestEmail->send('vasildakov@gmail.com');
+
+        $locale = $request->getAttribute('routeLocale', 'en');
 
         // Get Mezzio session from request attribute
         $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
@@ -39,11 +47,20 @@ class LoginFormHandler implements RequestHandlerInterface
         // just testing Mezzio session usage
         $session->set('test', 'some-session-value');
 
-        $content = $this->template->render('sandbox::login', []);
+        $content = $this->template->render('sandbox::login', [
+            'locale' => $locale,
+        ]);
+
+        $this->logger->info('Login form shown.');
 
         return new HtmlResponse($this->template->render('layout::sandbox', [
             'content' => $content,
             'data'    => [],
         ]));
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }

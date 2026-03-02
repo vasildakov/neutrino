@@ -18,57 +18,87 @@ use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
 use Mezzio\Authentication\Session\PhpSession;
 use Mezzio\Authentication\UserInterface;
-use Mezzio\Session\SessionMiddleware;
-use Neutrino\Domain\User\AuthenticatedUser;
-use Neutrino\Queue\QueueInterface;
+use Mezzio\Session\SessionInterface;
+use Neutrino\Repository\UserRepository;
+use Neutrino\Service\Cart\CartService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
+use RuntimeException;
 
-readonly class LoginHandler implements RequestHandlerInterface
+use function is_string;
+use function str_starts_with;
+
+final class LoginHandler implements RequestHandlerInterface, LoggerAwareInterface
 {
+    private LoggerInterface $logger;
+
     public function __construct(
-        private PhpSession $auth,
-        private QueueInterface $queue
+        private readonly PhpSession $authentication,
+        private readonly CartService $cartService,
+        private readonly UserRepository $userRepository,
     ) {
+        $this->logger = new NullLogger();
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        // Get Mezzio session from request attribute
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+        /** @var SessionInterface|null $session */
+        $session = $request->getAttribute(SessionInterface::class);
 
-        /** @var UserInterface|null $user */
-        $user = $this->auth->authenticate($request);
-        if (! $user) {
+        /** @var UserInterface|null $authUser */
+        $authUser = $this->authentication->authenticate($request);
+
+        if (! $authUser) {
+            $this->logger->error('Invalid credentials');
             return new JsonResponse(
-                [
-                    'error' => 'Invalid Credentials',
-                ],
+                ['error' => 'Invalid credentials'],
                 StatusCodeInterface::STATUS_UNAUTHORIZED
             );
         }
 
-        $scope = $user->getDetail('scope');
-        $uri   = match ($scope) {
-            'platform'  => '/platform',
-            'dashboard' => '/dashboard',
-            default => '/login',
-        };
+        if (! $session) {
+            $this->logger->error('Session is required for login.');
+            throw new RuntimeException('Session is required for login.');
+        }
 
-        // Prepare user data for queue
-        $userData = $user instanceof AuthenticatedUser
-            ? $user->toArray()
-            : [
-                'identity' => $user->getIdentity(),
-                'roles'    => $user->getRoles(),
-                'details'  => $user->getDetails(),
-            ];
+        // Save old session ID (for cart migration)
+        $oldSessionId = $session->getId();
 
-        $this->queue->push('Neutrino.Queue.Test', [
-            'user' => $userData,
-        ]);
+        // Regenerate session (security best practice)
+        $session->regenerate();
 
-        return new RedirectResponse($uri);
+        // Store user identity in session
+        $session->set('user_id', $authUser->getIdentity());
+
+        // Load actual User entity
+        $user = $this->userRepository->find($authUser->getIdentity());
+
+        if ($user) {
+            $this->logger->info('User logged in: ' . $user->getEmail());
+            // Merge guest cart into user cart
+            $this->cartService->mergeSessionCartIntoUser($oldSessionId, $user);
+        }
+
+        // Default redirect
+        $redirect = '/';
+
+        // If a user tried to access the protected page (like checkout)
+        $intended = $session->get('intended_url');
+        $session->unset('intended_url');
+
+        if (is_string($intended) && str_starts_with($intended, '/')) {
+            $redirect = $intended;
+        }
+
+        return new RedirectResponse($redirect, 303);
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 }
