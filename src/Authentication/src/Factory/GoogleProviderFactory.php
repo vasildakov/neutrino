@@ -11,7 +11,7 @@ declare(strict_types=1);
  * file that was distributed with this source code.
  */
 
-namespace Neutrino\Authentication\Google;
+namespace Neutrino\Authentication\Factory;
 
 use League\OAuth2\Client\Provider\Google;
 use Psr\Container\ContainerExceptionInterface;

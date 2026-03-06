@@ -5,24 +5,26 @@ declare(strict_types=1);
 namespace Neutrino\Authentication;
 
 use League\OAuth2\Client\Provider\Google;
-use Neutrino\Authentication\Google\GoogleProviderFactory;
+use Neutrino\Authentication\Factory\GoogleProviderFactory;
+use Neutrino\Authentication\Factory\LinkedinProviderFactory;
+use Neutrino\Authentication\Factory\TwitterProviderFactory;
 use Neutrino\Authentication\Handler\Google\GoogleCallbackHandler;
 use Neutrino\Authentication\Handler\Google\GoogleCallbackHandlerFactory;
 use Neutrino\Authentication\Handler\Google\GoogleLoginHandler;
 use Neutrino\Authentication\Handler\Google\GoogleLoginHandlerFactory;
-
 use Neutrino\Authentication\Handler\Google\GoogleSuccessHandler;
 use Neutrino\Authentication\Handler\Google\GoogleSuccessHandlerFactory;
-use Neutrino\Authentication\Handler\Google\GoogleUserResolverFactory;
-use Neutrino\Authentication\Handler\Google\GoogleUserResolverInterface;
+use Neutrino\Authentication\Handler\Linkedin\LinkedinCallbackHandler;
+use Neutrino\Authentication\Handler\Linkedin\LinkedinCallbackHandlerFactory;
+use Neutrino\Authentication\Handler\Linkedin\LinkedinLoginHandler;
+use Neutrino\Authentication\Handler\Linkedin\LinkedinLoginHandlerFactory;
 use Neutrino\Authentication\Handler\Twitter\TwitterLoginHandler;
 use Neutrino\Authentication\Handler\Twitter\TwitterLoginHandlerFactory;
-use Neutrino\Authentication\Resolver\OAuthUserResolver;
+use Neutrino\Authentication\Provider\LinkedinProvider;
 use Neutrino\Authentication\Resolver\OAuthUserResolverFactory;
 use Neutrino\Authentication\Resolver\RedirectResolver;
 use Neutrino\Authentication\Resolver\RedirectResolverFactory;
 use Neutrino\Authentication\Resolver\UserResolverInterface;
-use Neutrino\Authentication\Twitter\TwitterProviderFactory;
 use Smolblog\OAuth2\Client\Provider\Twitter;
 
 class ConfigProvider
@@ -56,9 +58,14 @@ class ConfigProvider
                 Twitter::class                 => TwitterProviderFactory::class,
                 TwitterLoginHandler::class     => TwitterLoginHandlerFactory::class,
 
+                // LinkedIn
+                LinkedinProvider::class         => LinkedinProviderFactory::class,
+                LinkedinLoginHandler::class     => LinkedinLoginHandlerFactory::class,
+                LinkedinCallbackHandler::class  => LinkedinCallbackHandlerFactory::class,
+
                 // Resolvers
                 UserResolverInterface::class => OAuthUserResolverFactory::class,
-                RedirectResolver::class => RedirectResolverFactory::class,
+                RedirectResolver::class      => RedirectResolverFactory::class,
             ],
         ];
     }
@@ -126,6 +133,20 @@ class ConfigProvider
                 'middleware'      => Handler\Facebook\FacebookSuccessHandler::class,
                 'allowed_methods' => ['GET'],
             ],
+
+            // LinkedIn OAuth
+            [
+                'name'            => 'auth.linkedin.start',
+                'path'            => '/auth/linkedin',
+                'middleware'      => Handler\Linkedin\LinkedinLoginHandler::class,
+                'allowed_methods' => ['GET'],
+            ],
+            [
+                'name'            => 'auth.linkedin.callback',
+                'path'            => '/auth/linkedin/callback',
+                'middleware'      => Handler\Linkedin\LinkedinCallbackHandler::class,
+                'allowed_methods' => ['GET'],
+            ],
         ];
     }
 
@@ -148,8 +169,23 @@ class ConfigProvider
                 // example scopes; choose what you need:
                 'scopes'        => ['tweet.read', 'users.read', 'offline.access'],
             ],
-            'facebook' => [],
-            'linkedin' => [],
+            'facebook' => [
+                'client_id'     => $_ENV['FACEBOOK_OAUTH_CLIENT_ID'] ?? '',
+                'client_secret' => $_ENV['FACEBOOK_OAUTH_CLIENT_SECRET'] ?? '',
+                'redirect_uri'  => $_ENV['FACEBOOK_OAUTH_REDIRECT_URI'] ?? '',
+                'scopes'        => ['email', 'public_profile'],
+            ],
+            'linkedin' => [
+                'client_id'     => $_ENV['LINKEDIN_OAUTH_CLIENT_ID'] ?? '',
+                'client_secret' => $_ENV['LINKEDIN_OAUTH_CLIENT_SECRET'] ?? '',
+                'redirect_uri'  => $_ENV['LINKEDIN_OAUTH_REDIRECT_URI'] ?? '',
+                'scopes'        => ['openid', 'profile', 'email'],
+
+                // OAuth endpoints
+                'authorize_url' => 'https://www.linkedin.com/oauth/v2/authorization',
+                'token_url'     => 'https://www.linkedin.com/oauth/v2/accessToken',
+                'userinfo_url'  => 'https://api.linkedin.com/v2/userinfo',
+            ],
         ];
     }
 }
