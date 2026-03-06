@@ -34,6 +34,9 @@
     <!-- Template CSS -->
 
     <style>
+        .content {
+            background-color: #f3f3f3 !important;
+        }
         .sidebar-minimized .group-label {
             display: none;
         }
@@ -57,6 +60,29 @@
         .img-zoom:hover .zoom-img {
             transform: scale(1.2);
         }
+        .table tbody tr td {
+            font-size: 14px;
+            color: #3e3e3e !important;
+        }
+        .table-striped {
+            border: none !important;
+        }
+        .table-striped > tbody > tr:nth-of-type(odd) > td,
+        .table-striped > tbody > tr:nth-of-type(odd) > th {
+            --bs-table-bg-type: #f8f8f8;
+            background-color: #f8f8f8 !important;
+            color: #3e3e3e !important;
+            border: none !important;
+        }
+        .table-striped > tbody > tr:nth-of-type(even) > td,
+        .table-striped > tbody > tr:nth-of-type(even) > th {
+            --bs-table-bg-type: #ffffff;
+            background-color: #ffffff !important;
+            border: none !important;
+        }
+        .table-striped thead th {
+            border: none !important;
+        }
     </style>
 </head>
 
@@ -64,10 +90,10 @@
 
 
 <!-- sidebar -->
-<?php echo $this->partial('partial::sidebar'); ?>
+<?php echo $this->partial('platform::sidebar'); ?>
 <?php //echo $this->navigation('sidebar'); ?>
 
-<div class="content" style="background-color:#ebeeef;">
+<div class="content" style="background-color:#f3f3f3;">
     <div class="content-header d-flex justify-content-between bg-white">
         <div class="d-flex">
             <a id="contentMenu" href="#" class="content-menu d-none d-lg-flex"><i data-feather="menu"></i></a>
@@ -105,11 +131,11 @@
             <ul class="nav quick-section">
                 <li>
                     <a href="#" class="content-menu avatar online">
-                        <div class="ratio ratio-1x1 overflow-hidden rounded-circle" style="width: 40px">
                         <img
-                            src="<?php echo $this->avatar($user);?>"
-                            alt="" class="rounded-circle img-zoom" />
-                        </div>
+                                src="<?php echo $this->avatar($user);?>"
+                                alt=""
+                                class="rounded-circle img-zoom"
+                                style="width: 36px; height: 36px; object-fit: cover;" />
                     </a>
                 </li>
                 <li>
@@ -138,7 +164,7 @@
 <script src="/js/index.js"></script-->
 
 <!--script src="/js/neutrino.js"></script-->
-<script src="https://cdn.tiny.cloud/1/htnhh9y9olitjplqxt8ntddngu92tjcjajkg9i044677g1hi/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script>
+<!--script src="https://cdn.tiny.cloud/1/htnhh9y9olitjplqxt8ntddngu92tjcjajkg9i044677g1hi/tinymce/8/tinymce.min.js" referrerpolicy="origin" crossorigin="anonymous"></script-->
 <script src="/dist/js/dashboard.js"></script>
 
 

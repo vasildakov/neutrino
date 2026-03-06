@@ -1,3 +1,11 @@
+<style>
+    table tbody tr td  {
+        font-family: "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+        color: #606060 !important;
+        font-size: 14px !important;
+    }
+</style>
+
 <div class="card border-0 rounded-0">
     <div class="card-body p-5">
         <h3 content="mb-5">Database <strong>Health</strong></h3>
@@ -22,9 +30,17 @@
                 <td><input type="checkbox"></td>
                 <td><span class=""><?=$object->id;?></td>
                 <td><span class=""><?=$object->database;?></td>
-                <td><span class="badge text-bg-success rounded-1">OK</span></td>
+                <td><span class="badge text-bg-primary rounded-1">OK</span></td>
                 <td><span class=""><?=$object->latency;?> ms</td>
-                <td><span class="">...</td>
+                <td>
+                    <?php if ($object->migrationVersion): ?>
+                        <span class="badge text-bg-success rounded-1">
+                            <?= $object->migrationVersion ?>
+                        </span>
+                    <?php else: ?>
+                        <span class="badge text-bg-danger rounded-1">No migrations</span>
+                    <?php endif; ?>
+                </td>
                 <td><span class=""><?=$object->size;?> MB</td>
                 <td><span class="">...</td>
                 <td><span class="">

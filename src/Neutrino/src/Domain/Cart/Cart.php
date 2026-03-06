@@ -16,9 +16,11 @@ namespace Neutrino\Domain\Cart;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Neutrino\Domain\User\User;
 use Ramsey\Uuid\Doctrine\UuidGenerator;
+use Ramsey\Uuid\Uuid;
 use Ramsey\Uuid\UuidInterface;
 
 use function max;
@@ -50,13 +52,13 @@ class Cart
     /**
      * Session ID (for guest users)
      */
-    #[ORM\Column(name: 'session_id', type: 'string', length: 255, nullable: true)]
+    #[ORM\Column(name: 'session_id', type: Types::STRING, length: 255, nullable: true)]
     private ?string $sessionId = null;
 
     /**
      * Cart status: active, completed, abandoned, merged
      */
-    #[ORM\Column(type: 'string', length: 20)]
+    #[ORM\Column(type: Types::STRING, length: 20)]
     private string $status = 'active';
 
     /**
@@ -75,50 +77,51 @@ class Cart
     /**
      * Subtotal in cents
      */
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: Types::INTEGER)]
     private int $subtotal = 0;
 
     /**
      * Tax amount in cents
      */
-    #[ORM\Column(name: 'tax_amount', type: 'integer')]
+    #[ORM\Column(name: 'tax_amount', type: Types::INTEGER)]
     private int $taxAmount = 0;
 
     /**
      * Total amount in cents
      */
-    #[ORM\Column(type: 'integer')]
+    #[ORM\Column(type: Types::INTEGER)]
     private int $total = 0;
 
     /**
      * Currency code
      */
-    #[ORM\Column(type: 'string', length: 3)]
-    private string $currency = 'USD';
+    #[ORM\Column(type: Types::STRING, length: 3)]
+    private string $currency = 'EUR';
 
     /**
      * Coupon code applied
      */
-    #[ORM\Column(name: 'coupon_code', type: 'string', length: 50, nullable: true)]
+    #[ORM\Column(name: 'coupon_code', type: Types::STRING, length: 50, nullable: true)]
     private ?string $couponCode = null;
 
     /**
      * Discount amount in cents
      */
-    #[ORM\Column(name: 'discount_amount', type: 'integer')]
+    #[ORM\Column(name: 'discount_amount', type: Types::INTEGER)]
     private int $discountAmount = 0;
 
-    #[ORM\Column(name: 'created_at', type: 'datetime_immutable')]
+    #[ORM\Column(name: 'created_at', type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $createdAt;
 
-    #[ORM\Column(name: 'updated_at', type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(name: 'updated_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $updatedAt = null;
 
-    #[ORM\Column(name: 'completed_at', type: 'datetime_immutable', nullable: true)]
+    #[ORM\Column(name: 'completed_at', type: Types::DATETIME_IMMUTABLE, nullable: true)]
     private ?DateTimeImmutable $completedAt = null;
 
     public function __construct(?User $user = null, ?string $sessionId = null)
     {
+        $this->id        = Uuid::uuid4();
         $this->user      = $user;
         $this->sessionId = $sessionId;
         $this->items     = new ArrayCollection();
@@ -146,9 +149,21 @@ class Cart
         return $this->sessionId;
     }
 
+    public function setSessionId(?string $sessionId): void
+    {
+        $this->sessionId = $sessionId;
+        $this->updatedAt = new DateTimeImmutable();
+    }
+
     public function getStatus(): string
     {
         return $this->status;
+    }
+
+    public function setStatus(string $status): void
+    {
+        $this->status    = $status;
+        $this->updatedAt = new DateTimeImmutable();
     }
 
     /**
@@ -162,7 +177,7 @@ class Cart
     }
 
     /**
-     * Add item to cart
+     * Add item to the cart
      */
     public function addItem(CartItem $item): void
     {
@@ -255,7 +270,7 @@ class Cart
     }
 
     /**
-     * Check if cart is empty
+     * Check if the cart is empty
      */
     public function isEmpty(): bool
     {

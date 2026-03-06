@@ -14,6 +14,7 @@ declare(strict_types=1);
 namespace Neutrino\Handler\Cart;
 
 use Mezzio\Template\TemplateRendererInterface;
+use Neutrino\Repository\UserRepository;
 use Neutrino\Service\Cart\CartService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -36,6 +37,9 @@ class ViewCartHandlerFactory
         $cartService = $container->get(CartService::class);
         assert($cartService instanceof CartService);
 
-        return new ViewCartHandler($template, $cartService);
+        $userRepository = $container->get(UserRepository::class);
+        assert($userRepository instanceof UserRepository);
+
+        return new ViewCartHandler($template, $cartService, $userRepository);
     }
 }

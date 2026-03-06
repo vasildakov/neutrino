@@ -19,7 +19,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 
-class RegisterFormHandler implements RequestHandlerInterface
+final class RegisterFormHandler implements RequestHandlerInterface
 {
     public function __construct(private TemplateRendererInterface $template)
     {
@@ -27,8 +27,12 @@ class RegisterFormHandler implements RequestHandlerInterface
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        return new HtmlResponse(
-            $this->template->render('neutrino::register')
-        );
+        return new HtmlResponse($this->template->render(
+            'sandbox::register',
+            [
+                'layout' => 'layout::sandbox',
+                'title'  => 'Sign Up',
+            ],
+        ));
     }
 }

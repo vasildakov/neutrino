@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,20 +10,20 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\Security\Authorization;
 
-use Neutrino\Domain\User\Privilege;
-use Neutrino\Domain\User\Resource;
 use Neutrino\Domain\User\Role;
+use RuntimeException;
 
 use function is_string;
 
 readonly class AuthorizationService implements AuthorizationServiceInterface
 {
-
     public function __construct(
         private AclProviderInterface $provider,
-    ) {}
+    ) {
+    }
 
     public function isAllowed(iterable $roles, string $resource, ?string $privilege = null): bool
     {
@@ -48,7 +49,7 @@ readonly class AuthorizationService implements AuthorizationServiceInterface
     public function assertAllowed(iterable $roles, string $resource, ?string $privilege = null): void
     {
         if (! $this->isAllowed($roles, $resource, $privilege)) {
-            throw new \RuntimeException('Forbidden'); // replace it with your ForbiddenException
+            throw new RuntimeException('Forbidden'); // replace it with your ForbiddenException
         }
     }
 }

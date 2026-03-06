@@ -23,14 +23,11 @@ use Psr\Http\Server\RequestHandlerInterface;
 
 use function is_array;
 
-readonly class RegisterHandler implements RequestHandlerInterface
+final class RegisterHandler implements RequestHandlerInterface
 {
-    // create an account in neutrino
-    // and create a tenant database for the account
-
     public function __construct(
         private RegisterService $service,
-        private PhpSession $auth
+        private PhpSession $authentication
     ) {
     }
 
@@ -66,7 +63,7 @@ readonly class RegisterHandler implements RequestHandlerInterface
         }
 
         // Auto-login
-        $this->auth->authenticate($request);
+        $this->authentication->authenticate($request);
 
         // Redirect to the platform/dashboard
         return new JsonResponse(

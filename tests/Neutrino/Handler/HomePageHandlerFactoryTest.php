@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace NeutrinoTest\Handler;
 
-use Neutrino\Handler\HomePageHandler;
-use Neutrino\Handler\HomePageHandlerFactory;
-use NeutrinoTest\InMemoryContainer;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
+use Neutrino\Handler\Home\HomePageHandler;
+use Neutrino\Handler\Home\HomePageHandlerFactory;
+use NeutrinoTest\InMemoryContainer;
 use PHPUnit\Framework\TestCase;
 
 final class HomePageHandlerFactoryTest extends TestCase

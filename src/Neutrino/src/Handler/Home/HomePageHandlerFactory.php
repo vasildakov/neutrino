@@ -16,11 +16,12 @@ namespace Neutrino\Handler\Home;
 use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
-use Neutrino\Queue\Redis\RedisQueue;
+use Neutrino\Queue\Driver\Redis\RedisStreamsQueue;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+
 use function assert;
 
 final class HomePageHandlerFactory
@@ -40,8 +41,8 @@ final class HomePageHandlerFactory
         $em = $container->get(EntityManagerInterface::class);
         assert($em instanceof EntityManagerInterface);
 
-        $queue = $container->get(RedisQueue::class);
-        assert($queue instanceof RedisQueue);
+        $queue = $container->get(RedisStreamsQueue::class);
+        assert($queue instanceof RedisStreamsQueue);
 
         $config    = $container->get('config');
         $queueName = $config['redis']['queue_name'] ?? 'neutrino_default';

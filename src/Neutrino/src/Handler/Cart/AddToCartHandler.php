@@ -18,34 +18,35 @@ use Exception;
 use InvalidArgumentException;
 use Laminas\Diactoros\Response\JsonResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
-use Mezzio\Authentication\UserInterface;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Session\SessionInterface;
 use Neutrino\Domain\Billing\Plan;
+use Neutrino\Repository\UserRepository;
 use Neutrino\Service\Cart\CartService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use Ramsey\Uuid\Uuid;
 
-/**
- * Add to Cart Handler - Add items to a shopping cart
- */
-readonly class AddToCartHandler implements RequestHandlerInterface
+final readonly class AddToCartHandler implements RequestHandlerInterface
 {
     public function __construct(
         private RouterInterface $router,
         private EntityManagerInterface $em,
-        private CartService $cartService
+        private CartService $cartService,
+        private UserRepository $userRepository,
     ) {
     }
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $user    = $request->getAttribute(UserInterface::class);
         $session = $request->getAttribute(SessionInterface::class);
 
-        // Create DTO from request
+        if (! $session) {
+            return new JsonResponse(['error' => 'Session is required'], 400);
+        }
+
+        // Validate DTO
         try {
             $cartRequest = AddToCartRequest::fromRequest($request);
             $cartRequest->validate();
@@ -53,15 +54,28 @@ readonly class AddToCartHandler implements RequestHandlerInterface
             return new JsonResponse(['error' => $e->getMessage()], 400);
         }
 
-        // Get or create cart
+        // Resolve cart ownership
         try {
-            $sessionId = $session ? $session->getId() : null;
-            $cart      = $this->cartService->getCart($user, $sessionId);
+            $sessionId = $session->getId();
+            $userId    = $session->get('identity');
+
+            if ($userId) {
+                // Find user by email (since session stores email as identity)
+                $user = $this->userRepository->findOneByEmail($userId);
+
+                if (! $user) {
+                    return new JsonResponse(['error' => 'User not found'], 404);
+                }
+
+                $cart = $this->cartService->getCartForUser($user);
+            } else {
+                $cart = $this->cartService->getCartForSession($sessionId);
+            }
         } catch (Exception $e) {
-            return new JsonResponse(['error' => 'Failed to get cart: ' . $e->getMessage()], 500);
+            return new JsonResponse(['error' => 'Failed to resolve cart'], 500);
         }
 
-        // Add item to cart
+        // Add item
         try {
             $replaced = false;
 
@@ -72,14 +86,12 @@ readonly class AddToCartHandler implements RequestHandlerInterface
                     return new JsonResponse(['error' => 'Plan not found'], 404);
                 }
 
-                // Check if cart already has a plan
                 $hadPlan = $cart->hasPlan();
-
                 $this->cartService->addPlan($cart, $plan, $cartRequest->billingPeriod);
-
-                // If cart had a plan before, it was replaced
                 $replaced = $hadPlan;
-            } elseif ($cartRequest->isAddon()) {
+            }
+
+            if ($cartRequest->isAddon()) {
                 $data  = $request->getParsedBody();
                 $name  = $data['name'] ?? 'Add-on';
                 $price = (int) ($data['price'] ?? 0);
@@ -93,35 +105,18 @@ readonly class AddToCartHandler implements RequestHandlerInterface
                 );
             }
 
-            // Check if this is an AJAX request
             if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
-                // Get current plan info for frontend tracking
-                $currentPlan = $cart->getPlanItem();
-                $planInfo    = null;
-                if ($currentPlan) {
-                    $planInfo = [
-                        'name'           => $currentPlan->getName(),
-                        'billing_period' => $currentPlan->getBillingPeriod(),
-                    ];
-                }
-
                 return new JsonResponse([
-                    'success'     => true,
-                    'cartCount'   => $cart->getTotalQuantity(),
-                    'message'     => 'Item added to cart',
-                    'replaced'    => $replaced,
-                    'currentPlan' => $planInfo,
+                    'success'   => true,
+                    'cartCount' => $cart->getTotalQuantity(),
+                    'replaced'  => $replaced,
                 ]);
             }
 
-            // Regular request - redirect to cart
             return new RedirectResponse($this->router->generateUri('cart.view'));
         } catch (Exception $e) {
             if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
-                return new JsonResponse([
-                    'error' => $e->getMessage(),
-                    'type'  => $e::class,
-                ], 500);
+                return new JsonResponse(['error' => $e->getMessage()], 500);
             }
 
             return new RedirectResponse($this->router->generateUri('home'));

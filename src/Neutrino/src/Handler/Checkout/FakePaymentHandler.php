@@ -14,15 +14,11 @@ declare(strict_types=1);
 namespace Neutrino\Handler\Checkout;
 
 use Laminas\Diactoros\Response\HtmlResponse;
+use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-
-use function session_start;
-use function session_status;
-
-use const PHP_SESSION_NONE;
 
 final readonly class FakePaymentHandler implements RequestHandlerInterface
 {
@@ -34,17 +30,14 @@ final readonly class FakePaymentHandler implements RequestHandlerInterface
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         $queryParams = $request->getQueryParams();
+        $session     = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
 
         $token       = $queryParams['token'] ?? null;
         $amount      = $queryParams['amount'] ?? 0;
         $currency    = $queryParams['currency'] ?? 'USD';
         $description = $queryParams['description'] ?? 'Payment';
 
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
-
-        $paymentData = $_SESSION['fake_payment'] ?? null;
+        $paymentData = $session?->get('fake_payment');
 
         $data = [
             'token'       => $token,

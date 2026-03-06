@@ -67,7 +67,7 @@ final class ConsentRevokeHandler implements RequestHandlerInterface
             )
         );
 
-        // Add consent flag cookie (NOT HttpOnly, so JS can check if consent was given)
+        // Add a consent flag cookie (NOT HttpOnly, so JS can check if consent was given)
         $response = $response->withAddedHeader(
             'Set-Cookie',
             sprintf(

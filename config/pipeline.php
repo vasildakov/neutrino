@@ -5,19 +5,20 @@ declare(strict_types=1);
 use Laminas\Stratigility\Middleware\ErrorHandler;
 use Mezzio\Application;
 use Mezzio\Authentication\AuthenticationMiddleware;
+use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Handler\NotFoundHandler;
 use Mezzio\Helper\ServerUrlMiddleware;
 use Mezzio\Helper\UrlHelperMiddleware;
 use Mezzio\MiddlewareFactory;
 use Mezzio\Router\Middleware\DispatchMiddleware;
-use Mezzio\Router\Middleware\ImplicitHeadMiddleware;
 use Mezzio\Router\Middleware\ImplicitOptionsMiddleware;
 use Mezzio\Router\Middleware\MethodNotAllowedMiddleware;
 use Mezzio\Router\Middleware\RouteMiddleware;
 use Mezzio\Session\SessionMiddleware;
+use Neutrino\Analytics\Middleware\AnalyticsMiddleware;
 use Neutrino\Middleware\AuthorizationMiddleware;
 use Neutrino\Middleware\InjectUserToTemplatesMiddleware;
-use PhpMiddleware\PhpDebugBar\PhpDebugBarMiddleware;
+use Neutrino\Middleware\LocalizationMiddleware;
 use Psr\Container\ContainerInterface;
 
 /**
@@ -25,7 +26,6 @@ use Psr\Container\ContainerInterface;
  */
 
 return function (Application $app, MiddlewareFactory $factory, ContainerInterface $container): void {
-
     // The error handler should be the first (most outer) middleware to catch
     // all Exceptions.
     $app->pipe(ErrorHandler::class);
@@ -52,8 +52,11 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // Register the routing middleware in the middleware pipeline.
     // This middleware registers the Mezzio\Router\RouteResult request attribute.
     $app->pipe(SessionMiddleware::class);
-    $app->pipe(ErrorHandler::class);
+    $app->pipe(FlashMessageMiddleware::class);
     $app->pipe(RouteMiddleware::class);
+    $app->pipe(LocalizationMiddleware::class);
+    //$app->pipe(CsrfMiddleware::class);
+    $app->pipe(AnalyticsMiddleware::class);
 
     // The following handle routing failures for common conditions:
     // - HEAD request but no routes answer that method
@@ -65,8 +68,9 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     $app->pipe('/platform', [
         AuthenticationMiddleware::class,
         AuthorizationMiddleware::class,
-        InjectUserToTemplatesMiddleware::class
+        InjectUserToTemplatesMiddleware::class,
     ]);
+
 
     $app->pipe(ImplicitOptionsMiddleware::class);
     $app->pipe(MethodNotAllowedMiddleware::class);
@@ -88,8 +92,4 @@ return function (Application $app, MiddlewareFactory $factory, ContainerInterfac
     // NotFoundHandler kicks in; alternately, you can provide other fallback
     // middleware to execute.
     $app->pipe(NotFoundHandler::class);
-
-    if (! empty($container->get('config')['debug'])) {
-        $app->pipe(PhpDebugBarMiddleware::class);
-    }
 };

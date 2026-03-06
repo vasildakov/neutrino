@@ -1,26 +1,40 @@
-Copyright (c) 2020 Laminas Project a Series of LF Projects, LLC.
+# Proprietary License
 
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
+Copyright (c) 2026 Neutrino. All Rights Reserved.
 
-- Redistributions of source code must retain the above copyright notice, this
-  list of conditions and the following disclaimer.
+## License Terms
 
-- Redistributions in binary form must reproduce the above copyright notice,
-  this list of conditions and the following disclaimer in the documentation
-  and/or other materials provided with the distribution.
+This software and associated documentation files (the "Software") are the proprietary and confidential property of Neutrino.
 
-- Neither the name of Laminas Foundation nor the names of its contributors may
-  be used to endorse or promote products derived from this software without
-  specific prior written permission.
+### Restrictions
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
-ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+1. **No Copying**: You may not copy, reproduce, or duplicate the Software in any form.
+
+2. **No Distribution**: You may not distribute, publish, transmit, or make available the Software to any third party.
+
+3. **No Modification**: You may not modify, adapt, alter, translate, or create derivative works from the Software.
+
+4. **No Reverse Engineering**: You may not reverse engineer, decompile, disassemble, or otherwise attempt to derive the source code of the Software.
+
+5. **No Commercial Use**: You may not use the Software for any commercial purpose without explicit written permission from Neutrino.
+
+### Ownership
+
+All rights, title, and interest in and to the Software, including all intellectual property rights, are and shall remain the exclusive property of Neutrino.
+
+### Termination
+
+Any unauthorized use of the Software will result in immediate termination of any rights granted and may result in legal action.
+
+### Disclaimer
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+
+### Limitation of Liability
+
+IN NO EVENT SHALL NEUTRINO BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+For licensing inquiries, please contact Neutrino.
+

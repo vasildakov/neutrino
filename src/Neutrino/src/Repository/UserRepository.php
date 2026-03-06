@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,15 +10,19 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
-use Mezzio\Authentication\DefaultUser;
-use Mezzio\Authentication\UserInterface;
-use Mezzio\Authentication\UserRepositoryInterface;
+use Neutrino\Domain\User\UserInterface;
+use Neutrino\Domain\User\UserRepositoryInterface;
+use Neutrino\Domain\User\AuthenticatedUser;
 use Neutrino\Domain\User\Email;
 use Neutrino\Domain\User\User;
+
+use function mb_strtolower;
+use function trim;
 
 /**
  * @extends EntityRepository<User>
@@ -31,7 +36,6 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         return $user;
     }
 
-
     /**
      * @throws NonUniqueResultException
      */
@@ -42,8 +46,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
             ->where('u.email = :email')
             ->setParameter('email', new Email($credential))
             ->getQuery()
-            ->getOneOrNullResult()
-        ;
+            ->getOneOrNullResult();
 
         if (! $user) {
             return null;
@@ -54,10 +57,22 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
         }
 
         // You can also create your own class implementing UserInterface
-        return new DefaultUser(
+        return new AuthenticatedUser(
             identity: (string) $user->getId(), // identity
-            roles: (array) $user->getRolesNames(),  // roles
-            details: (array) $user->getDetails()
+            roles: (array) $user->getRolesNames(), // roles
+            details: (array) $user->getDetails()    // details
         );
+    }
+
+    public function create(User $user): void
+    {
+        $em = $this->getEntityManager();
+        $em->persist($user);
+        $em->flush();
+    }
+
+    public function save(User $user): void
+    {
+        $this->getEntityManager()->flush();
     }
 }

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace NeutrinoTest\Handler;
 
-use Neutrino\Handler\HomePageHandler;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Laminas\Diactoros\Response\JsonResponse;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
+use Neutrino\Handler\Home\HomePageHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;

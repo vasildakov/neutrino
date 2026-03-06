@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Platform;
 
+use Platform\Handler\HomeHandler;
+
 class ConfigProvider
 {
     public function __invoke(): array
@@ -17,50 +19,60 @@ class ConfigProvider
         ];
     }
 
-    public function getDependencies(): array {
+    public function getDependencies(): array
+    {
         return [
             'factories' => [
-                Handler\HomeHandler::class => Handler\HomeHandlerFactory::class,
+                HomeHandler::class                  => Handler\HomeHandlerFactory::class,
                 Handler\ShowDatabasesHandler::class => Handler\ShowDatabasesHandlerFactory::class,
-                Handler\ListAccounts::class => Handler\ListAccountsFactory::class,
+                Handler\QueueHandler::class         => Handler\QueueHandlerFactory::class,
+                Handler\ListAccounts::class         => Handler\ListAccountsFactory::class,
+                Handler\ShowUserHandler::class      => Handler\ShowUserHandlerFactory::class,
 
                 // Services
                 Service\Database\DatabaseStatsService::class => Service\Database\DatabaseStatsServiceFactory::class,
-            ]
+            ],
         ];
     }
 
-    public function getDoctrineEntities(): array {
+    public function getDoctrineEntities(): array
+    {
         return [];
     }
 
-    public function getTemplates(): array {
+    public function getTemplates(): array
+    {
         return [
+            'map' => [
+                'platform::sidebar' => __DIR__ . '/../templates/platform/partial/sidebar.phtml',
+            ],
             'paths' => [
                 // Theme overrides FIRST
                 'platform' => [
                     __DIR__ . '/../templates/platform',
                 ],
-                'layout' => [
+                'layout'   => [
                     __DIR__ . '/../templates/platform/layout', // theme override first// fallback
                 ],
-                'partial' => [
-                    __DIR__ . '/../templates/platform/partial'
+                'partial'  => [
+                    __DIR__ . '/../templates/platform/partial',
                 ],
-            ]
+            ],
         ];
     }
 
-    public function getCommands(): array {
+    public function getCommands(): array
+    {
         return [];
     }
 
-    public function getRoutes(): array {
+    public function getRoutes(): array
+    {
         return [
             [
-                'name'       => 'platform.home',
-                'path'       => '/platform',
-                'middleware' => HomeHandler::class,
+                'name'            => 'platform.home',
+                'path'            => '/platform',
+                'middleware'      => HomeHandler::class,
                 'allowed_methods' => ['GET'],
             ],
         ];

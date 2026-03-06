@@ -1,11 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neutrino\Mail;
 
 use Psr\Container\ContainerInterface;
 use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mailer\Transport;
+
+use function sprintf;
 
 final class SymfonyMailerFactory
 {

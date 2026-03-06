@@ -14,12 +14,11 @@ declare(strict_types=1);
 namespace Neutrino\Handler\Home;
 
 use Doctrine\ORM\EntityManagerInterface;
-use JsonException;
 use Laminas\Diactoros\Response\HtmlResponse;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Neutrino\Domain\Billing\Plan;
-use Neutrino\Queue\Redis\RedisQueue;
+use Neutrino\Queue\Driver\Redis\RedisStreamsQueue;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
@@ -33,21 +32,15 @@ final readonly class HomePageHandler implements RequestHandlerInterface
         private RouterInterface $router,
         private EntityManagerInterface $em,
         private TemplateRendererInterface $template,
-        private RedisQueue $queue,
+        private RedisStreamsQueue $queue,
         private string $queueName
     ) {
     }
 
-    /**
-     * @throws JsonException
-     */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+
         $queuedAt = time();
-        $this->queue->push($this->queueName, [
-            'type'      => 'test',
-            'timestamp' => $queuedAt,
-        ]);
 
         // Fetch all plans from the database
         $plans = $this->em->getRepository(Plan::class)->findBy(

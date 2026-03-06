@@ -9,6 +9,6 @@ return [
         'Neutrino\Migrations' => __DIR__ . '/data/migrations',
     ],
     'all_or_nothing' => true,
-    'transactional' => false,
+    'transactional' => true,
     'check_database_platform' => true,
 ];

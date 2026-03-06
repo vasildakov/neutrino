@@ -11,6 +11,7 @@ declare(strict_types=1);
  */
 namespace Platform\Handler;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Template\TemplateRendererInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -30,6 +31,8 @@ final class HomeHandlerFactory
 
         assert($template instanceof TemplateRendererInterface || null === $template);
 
-        return new HomeHandler($template);
+        $em = $container->get(EntityManagerInterface::class);
+
+        return new HomeHandler($template, $em);
     }
 }

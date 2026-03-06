@@ -2,7 +2,7 @@
 
     <div class="row p-4 bg-white">
         <div class="col-12">
-            <h1 class="h4">Accounts</h1>
+            <h1 class="h4">Users</h1>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -16,14 +16,20 @@
                 </thead>
                 <tbody>
 
-                <?php foreach ($this->users as $account): ?>
+                <?php foreach ($this->users as $user): ?>
                     <tr>
-                        <td><?= $account->getShortId() ?></td>
-                        <td><?= $account->getFullName() ?></td>
-                        <td><?= $account->getEmail() ?></td>
-                        <td><?= implode(', ', $account->getRoles()->toArray()) ?></td>
-                        <td><?= $account->getCreatedAt()->format('Y-m-d h:i:s'); ?></td>
-                        <td>Action</td>
+                        <td><?= $user->getShortId() ?></td>
+                        <td><?= $user->getFullName() ?></td>
+                        <td><?= $user->getEmail() ?></td>
+                        <td><?= implode(', ', $user->getRoles()->toArray()) ?></td>
+                        <td><?= $user->getCreatedAt()->format('Y-m-d h:i:s'); ?></td>
+                        <td>
+                            <a
+                                    class="btn btn-small btn-danger"
+                                    href="<?=$this->url('platform.accounts.view', ['id' => (string)$user->getId()]);?>">
+                                View
+                            </a>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>

@@ -13,6 +13,7 @@ declare(strict_types=1);
 
 namespace Neutrino\Handler\Login;
 
+use Mezzio\Authentication\AuthenticationInterface;
 use Mezzio\Authentication\Session\PhpSession;
 use Neutrino\Log\ApplicationLoggerInterface;
 use Neutrino\Queue\Contract\QueueInterface;
@@ -22,10 +23,9 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 
-use Psr\Log\LoggerInterface;
 use function assert;
 
-class LoginHandlerFactory
+final class LoginHandlerFactory
 {
     /**
      * @throws ContainerExceptionInterface
@@ -34,7 +34,7 @@ class LoginHandlerFactory
     public function __invoke(ContainerInterface $container): LoginHandler
     {
         $auth = $container->get(PhpSession::class);
-        assert($auth instanceof PhpSession);
+        assert($auth instanceof AuthenticationInterface);
 
         $queue = $container->get(QueueInterface::class);
         assert($queue instanceof QueueInterface);
@@ -45,9 +45,11 @@ class LoginHandlerFactory
         $userRepository = $container->get(UserRepository::class);
         assert($userRepository instanceof UserRepository);
 
+        $inputFilter = new LoginInputFilter();
+
         $logger = $container->get(ApplicationLoggerInterface::class);
 
-        $handler = new LoginHandler($auth, $cartService, $userRepository);
+        $handler = new LoginHandler($auth, $inputFilter, $cartService, $userRepository);
         $handler->setLogger($logger);
 
         return $handler;

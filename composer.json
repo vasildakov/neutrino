@@ -13,26 +13,30 @@
         "psr-11",
         "psr-15"
     ],
-    "homepage": "https://mezzio.dev",
-    "support": {
-        "docs": "https://docs.mezzio.dev/mezzio/",
-        "issues": "https://github.com/mezzio/mezzio-skeleton/issues",
-        "source": "https://github.com/mezzio/mezzio-skeleton",
-        "rss": "https://github.com/mezzio/mezzio-skeleton/releases.atom",
-        "chat": "https://laminas.dev/chat",
-        "forum": "https://discourse.laminas.dev"
-    },
     "config": {
         "sort-packages": true,
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true,
             "composer/package-versions-deprecated": true,
-            "laminas/laminas-component-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "laminas/laminas-component-installer": true,
+            "php-http/discovery": true
         },
         "platform": {
             "php": "8.4.13"
         }
     },
+    "prefer-stable": true,
+    "minimum-stability": "dev",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:vasildakov/neutrino-analytics.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:vasildakov/neutrino-queue.git"
+        }
+    ],
     "extra": {
         "laminas": {
             "component-whitelist": [
@@ -47,9 +51,11 @@
     },
     "require": {
         "php": "~8.2.0 || ~8.3.0 || ~8.4.0 || ~8.5.0",
+        "ext-bcmath": "*",
         "ext-intl": "*",
         "ext-mysqli": "*",
         "ext-openssl": "*",
+        "ext-pcntl": "*",
         "ext-pdo": "*",
         "ext-redis": "*",
         "ext-sockets": "*",
@@ -57,44 +63,64 @@
         "composer/package-versions-deprecated": "^1.11.99.5",
         "doctrine/migrations": "^3.9",
         "doctrine/orm": "^3.6",
+        "geoip2/geoip2": "^3.3",
+        "laminas/laminas-cache": "^2.7",
         "laminas/laminas-component-installer": "^2.6 || ^3.5",
         "laminas/laminas-config-aggregator": "^1.18",
         "laminas/laminas-diactoros": "^3.8.0",
         "laminas/laminas-diagnostics": "^1.27",
+        "laminas/laminas-form": "^3.24",
+        "laminas/laminas-i18n": "^2.32",
+        "laminas/laminas-mail": "2.26.x-dev@dev",
         "laminas/laminas-permissions-acl": "^2.18",
         "laminas/laminas-permissions-rbac": "^3.8",
         "laminas/laminas-servicemanager": "^3.22",
         "laminas/laminas-session": "^2.26",
         "laminas/laminas-stdlib": "^3.21",
+        "laminas/laminas-validator": "^2.65",
+        "league/oauth2-client": "^2.9",
+        "league/oauth2-google": "^4.1",
+        "league/omnipay": "^3.2",
+        "league/uri-interfaces": "^7.0",
         "mezzio/mezzio": "^3.23.1",
         "mezzio/mezzio-authentication": "^1.12",
         "mezzio/mezzio-authentication-session": "^1.11",
+        "mezzio/mezzio-csrf": "^1.11",
+        "mezzio/mezzio-flash": "^1.10",
         "mezzio/mezzio-helpers": "^5.20",
         "mezzio/mezzio-laminasrouter": "^3.9.0",
         "mezzio/mezzio-laminasviewrenderer": "^2.15",
         "mezzio/mezzio-session": "^1.17",
         "mezzio/mezzio-session-ext": "^1.21",
+        "monolog/monolog": "^3.10",
+        "neutrino/analytics": "dev-main",
+        "neutrino/queue": "dev-main",
+        "omnipay/dummy": "^3.0",
+        "omnipay/paypal": "^3.0",
         "pda/pheanstalk": "^8.0",
         "php-amqplib/php-amqplib": "^3.7",
-        "php-middleware/php-debug-bar": "^4.2",
         "ramsey/uuid": "^4.9",
         "ramsey/uuid-doctrine": "^2.1",
+        "smolblog/oauth2-twitter": "^1.2",
         "symfony/console": "^7.4",
+        "symfony/mailer": "^8.0",
+        "symfony/mime": "^8.0",
         "symfony/var-exporter": "^7.0",
         "vasildakov/mezzio-doctrine": "dev-develop",
         "vlucas/phpdotenv": "^5.6"
     },
     "require-dev": {
         "doctrine/data-fixtures": "^2.2",
+        "fakerphp/faker": "^1.24",
         "filp/whoops": "^2.18",
         "laminas/laminas-coding-standard": "^3.1.0",
         "laminas/laminas-development-mode": "^3.14.0",
         "mezzio/mezzio-tooling": "^2.12",
-        "php-debugbar/doctrine-bridge": "^2.0",
         "phpstan/phpstan": "^2.1",
         "phpunit/phpunit": "^11.5.42",
         "psalm/plugin-phpunit": "^0.19.5",
         "roave/security-advisories": "dev-master",
+        "symfony/var-dumper": "^8.0",
         "vimeo/psalm": "^6.13.1"
     },
     "conflict": {
@@ -104,6 +130,7 @@
     },
     "autoload": {
         "psr-4": {
+            "Neutrino\\Authentication\\": "src/Authentication/src/",
             "Neutrino\\": "src/Neutrino/src/",
             "Dashboard\\": "src/Dashboard/src/",
             "Platform\\": "src/Platform/src/"

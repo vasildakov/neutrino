@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace NeutrinoTest\Domain\User;
 
 use Mezzio\Authentication\UserInterface;
+use Neutrino\Domain\Account\Account;
+use Neutrino\Domain\Account\AccountMembership;
 use Neutrino\Domain\User\Email;
 use Neutrino\Domain\User\Password;
 use Neutrino\Domain\User\Role;
@@ -62,6 +64,24 @@ class UserTest extends TestCase
         $user->addRole($member);
         $user->removeRole($member);
         $this->assertEmpty($user->getRoles());
+    }
+
+    #[Test]
+    #[Group('User')]
+    public function itCanGetAccountsFromMemberships(): void
+    {
+        $user = $this->user();
+        $accountA = new Account('Acme');
+        $accountB = new Account('Beta');
+
+        $user->addAccountMembership(AccountMembership::owner($accountA, $user));
+        $user->addAccountMembership(AccountMembership::owner($accountB, $user));
+
+        $accounts = $user->getAccounts();
+
+        $this->assertCount(2, $accounts);
+        $this->assertContains($accountA, $accounts);
+        $this->assertContains($accountB, $accounts);
     }
 
     private function user(): User

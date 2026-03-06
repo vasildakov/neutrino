@@ -16,12 +16,13 @@ namespace Neutrino\Handler\Checkout;
 use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Router\RouterInterface;
 use Mezzio\Template\TemplateRendererInterface;
-use Neutrino\Service\Payment\FakeService;
+use Neutrino\Log\ApplicationLoggerInterface;
 use Neutrino\Service\Payment\PaymentServiceInterface;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Psr\Log\LoggerInterface;
 
 use function assert;
 
@@ -42,10 +43,18 @@ final class CheckoutProcessHandlerFactory
         $template = $container->get(TemplateRendererInterface::class);
         assert($template instanceof TemplateRendererInterface);
 
-        // Get FakeService (implements PaymentServiceInterface)
-        $paymentService = $container->get(FakeService::class);
+        $paymentService = $container->get(PaymentServiceInterface::class);
         assert($paymentService instanceof PaymentServiceInterface);
 
-        return new CheckoutProcessHandler($router, $em, $template, $paymentService);
+        $form = $container->get(CheckoutForm::class);
+        assert($form instanceof CheckoutForm);
+
+        $logger = $container->get(ApplicationLoggerInterface::class);
+        assert($logger instanceof LoggerInterface);
+
+        $handler = new CheckoutProcessHandler($router, $em, $template, $paymentService, $form);
+        $handler->setLogger($logger);
+
+        return $handler;
     }
 }

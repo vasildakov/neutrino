@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,6 +10,7 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\Domain\User;
 
 use InvalidArgumentException;
@@ -16,6 +18,7 @@ use function password_hash;
 use function password_needs_rehash;
 use function password_verify;
 use function str_starts_with;
+use function random_bytes;
 
 readonly class Password
 {
@@ -51,6 +54,13 @@ readonly class Password
     public function needsRehash(): bool
     {
         return password_needs_rehash($this->hash, PASSWORD_ARGON2I);
+    }
+
+    public static function random(): self
+    {
+        $random = bin2hex(random_bytes(32));
+
+        return new self($random);
     }
 
     public function __toString(): string

@@ -1,11 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neutrino\Session;
 
-use Laminas\Session\Config\SessionConfig;
-use Laminas\Session\SessionManager;
-use Laminas\Session\Storage\SessionArrayStorage;
 use Laminas\Session\Container;
+use Laminas\Session\SessionManager;
 use Psr\Container\ContainerInterface;
 
 class SessionManagerFactory

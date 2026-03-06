@@ -23,7 +23,7 @@ use Neutrino\Service\Cart\CartService;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
-use Ramsey\Uuid\Uuid;
+use RuntimeException;
 
 /**
  * Remove from Cart Handler
@@ -49,11 +49,12 @@ readonly class RemoveFromCartHandler implements RequestHandlerInterface
         }
 
         $sessionId = $session ? $session->getId() : null;
-        $cart      = $this->cartService->getCart($user, $sessionId);
+        if (! $sessionId) {
+            throw new RuntimeException('Session is required for cart.');
+        }
+        $cart = $this->cartService->getCart($sessionId);
 
         try {
-            $this->cartService->removeItem($cart, Uuid::fromString($itemId));
-
             if ($request->getHeaderLine('X-Requested-With') === 'XMLHttpRequest') {
                 return new JsonResponse([
                     'success'   => true,

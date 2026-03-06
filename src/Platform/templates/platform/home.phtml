@@ -15,17 +15,764 @@
     </div>
 
 </div-->
+<style>
+    #bulgaria-map { width: 100%; height: 520px; }
+</style>
+
 
 <div class="container-fluid m-0 p-0">
-    <div class="grid bg-white p-4">
-        <div class="g-col-12">
-            Neutrino SaaS Platform
-        <?php dump($this->user);?>
-        <?php if ($this->user): ?>
-            Hello <b><?= $this->escapeHtml($this->user->getDetail('name')); ?></b> !
-        <?php endif; ?>
+    <?php if ($this->user): ?>
+        Hello <b><?= $this->escapeHtml($this->user->getDetail('name')); ?></b> !
+    <?php endif; ?>
+
+    <div class="row row-cols-xl-5 row-cols-md-2 row-cols-1 mb-3">
+        <div class="col mt-4">
+            <a href="#" class="features feature-primary d-flex justify-content-between align-items-center bg-white p-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon text-center rounded-pill">
+                        <i class="uil uil-user-circle fs-4 mb-0"></i>
+                    </div>
+                    <div class="flex-1 ms-3">
+                        <h6 class="mb-0 text-muted">Visitor</h6>
+                        <p class="fs-5 text-dark fw-bold mb-0"><span class="counter-value" data-target="4589">4589</span></p>
+                    </div>
+                </div>
+
+                <span class="text-danger"><i class="uil uil-chart-down"></i> 0.5%</span>
+            </a>
+        </div><!--end col-->
+
+        <div class="col mt-4">
+            <a href="#" class="features feature-primary d-flex justify-content-between align-items-center bg-white p-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon text-center rounded-pill">
+                        <i class="uil uil-usd-circle fs-4 mb-0"></i>
+                    </div>
+                    <div class="flex-1 ms-3">
+                        <h6 class="mb-0 text-muted">Revenue</h6>
+                        <p class="fs-5 text-dark fw-bold mb-0">$<span class="counter-value" data-target="48575">48575</span></p>
+                    </div>
+                </div>
+
+                <span class="text-success"><i class="uil uil-arrow-growth"></i> 3.84%</span>
+            </a>
+        </div><!--end col-->
+
+        <div class="col mt-4">
+            <a href="#" class="features feature-primary d-flex justify-content-between align-items-center bg-white p-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon text-center rounded-pill">
+                        <i class="uil uil-shopping-bag fs-4 mb-0"></i>
+                    </div>
+                    <div class="flex-1 ms-3">
+                        <h6 class="mb-0 text-muted">Orders</h6>
+                        <p class="fs-5 text-dark fw-bold mb-0"><span class="counter-value" data-target="4800">4800</span></p>
+                    </div>
+                </div>
+
+                <span class="text-success"><i class="uil uil-arrow-growth"></i> 1.46%</span>
+            </a>
+        </div><!--end col-->
+
+        <div class="col mt-4">
+            <a href="#" class="features feature-primary d-flex justify-content-between align-items-center bg-white p-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon text-center rounded-pill">
+                        <i class="uil uil-store fs-4 mb-0"></i>
+                    </div>
+                    <div class="flex-1 ms-3">
+                        <h6 class="mb-0 text-muted">Items</h6>
+                        <p class="fs-5 text-dark fw-bold mb-0"><span class="counter-value" data-target="145">145</span></p>
+                    </div>
+                </div>
+
+                <span class="text-muted"><i class="uil uil-analysis"></i> 0.0%</span>
+            </a>
+        </div><!--end col-->
+
+        <div class="col mt-4">
+            <a href="#" class="features feature-primary d-flex justify-content-between align-items-center bg-white p-3">
+                <div class="d-flex align-items-center">
+                    <div class="icon text-center rounded-pill">
+                        <i class="uil uil-users-alt fs-4 mb-0"></i>
+                    </div>
+                    <div class="flex-1 ms-3">
+                        <h6 class="mb-0 text-muted">Users</h6>
+                        <p class="fs-5 text-dark fw-bold mb-0"><span class="counter-value" data-target="9">9</span>M</p>
+                    </div>
+                </div>
+
+                <span class="text-danger"><i class="uil uil-chart-down"></i> 0.5%</span>
+            </a>
+        </div><!--end col-->
+    </div>
+
+    <?php
+
+$registrations = [
+    [
+        'name'  => 'Anna Petrova',
+        'email' => 'anna.petrova@example.com',
+        'time'  => 'just now',
+        'badge' => 'success',
+    ],
+    [
+        'name'  => 'Mark Johnson',
+        'email' => 'mark.johnson@example.com',
+        'time'  => '5 min ago',
+        'badge' => 'primary',
+    ],
+    [
+        'name'  => 'Elena Ivanova',
+        'email' => 'elena.ivanova@example.com',
+        'time'  => '12 min ago',
+        'badge' => 'primary',
+    ],
+    [
+        'name'  => 'Daniel Müller',
+        'email' => 'daniel.mueller@example.com',
+        'time'  => '25 min ago',
+        'badge' => 'secondary',
+    ],
+    [
+        'name'  => 'Sofia Rossi',
+        'email' => 'sofia.rossi@example.com',
+        'time'  => '40 min ago',
+        'badge' => 'secondary',
+    ],
+    [
+        'name'  => 'Lucas Martin',
+        'email' => 'lucas.martin@example.com',
+        'time'  => '1 hour ago',
+        'badge' => 'secondary',
+    ],
+    [
+        'name'  => 'Nina Schmidt',
+        'email' => 'nina.schmidt@example.com',
+        'time'  => '2 hours ago',
+        'badge' => 'danger',
+    ],
+    [
+        'name'  => 'Ivan Georgiev',
+        'email' => 'ivan.georgiev@example.com',
+        'time'  => '3 hours ago',
+        'badge' => 'danger',
+    ],
+    [
+        'name'  => 'Emily Brown',
+        'email' => 'emily.brown@example.com',
+        'time'  => 'Yesterday',
+        'badge' => 'danger',
+    ],
+];
+?>
+
+    <div class="row">
+        <div class="col col-lg-8 col-sm-12 mt-4">
+            <div class="tile">
+                <div class="tile-title rounded-0 border-bottom p-3 d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-2 text-dark fw-bold">Visitor Distribution Map</h5>
+                        <p class="mb-1 text-muted">
+                            Interactive map showing visitor activity by location, highlighting geographic
+                            trends and engagement patterns across regions.
+                        </p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-small btn-light" href="#">All</a>
+                        <a class="btn btn-small btn-light" href="#">1M</a>
+                        <a class="btn btn-small btn-light" href="#">6M</a>
+                        <a class="btn btn-small btn-info" href="#">12M</a>
+                    </div>
+                </div>
+                <div class="tile-body rounded-0 p-0">
+                    <div id="chartdiv" style="width:100%; height:560px; min-height:560px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col col-lg-4 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0 p-4">
+                <h5 class="mb-3">Latest Registrations</h5>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor</p>
+
+                <ul class="list-group list-group-flush">
+                    <?php foreach ($registrations as $user): ?>
+                        <li class="list-group-item d-flex justify-content-between align-items-start px-0">
+                            <div>
+                                <div class="fw-semibold">
+                                    <?= htmlspecialchars($user['name'], ENT_QUOTES, 'UTF-8') ?>
+                                </div>
+                                <small class="text-muted">
+                                    <?= htmlspecialchars($user['email'], ENT_QUOTES, 'UTF-8') ?>
+                                </small>
+                            </div>
+
+                            <span class="badge bg-<?= $user['badge'] ?> rounded-pill">
+                                <?= htmlspecialchars($user['time'], ENT_QUOTES, 'UTF-8') ?>
+                            </span>
+                        </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-lg-8 col-md-12 col-sm-12 mt-4">
+            <div class="tile">
+                <div class="tile-title rounded-0 p-3 d-flex justify-content-between align-items-start">
+                    <div>
+                        <h5 class="mb-3">Visits and Registrations</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a class="btn btn-small btn-light" href="#">All</a>
+                        <a class="btn btn-small btn-light" href="#">1M</a>
+                        <a class="btn btn-small btn-light" href="#">6M</a>
+                        <a class="btn btn-small btn-info" href="#">12M</a>
+                    </div>
+                </div>
+
+                <div class="tile-body">
+                    <div id="chart-registrations" style="width:100%; height:400px; min-height:400px;"></div>
+
+                    <h5 class="my-3">Top Pages (Conversion Optimization)</h5>
+                    <table class="table table-centered table-nowrap mb-0">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Page</th>
+                            <th scope="col">Visits</th>
+                            <th scope="col">Avg Duration</th>
+                            <th scope="col">Bounce %</th>
+                            <th scope="col">Conversions</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>/pricing</td>
+                            <td>4,230</td>
+                            <td>1m 45s</td>
+                            <td>28%</td>
+                            <td>320</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>/features</td>
+                            <td>3,540</td>
+                            <td>1m 12s</td>
+                            <td>41%</td>
+                            <td>210</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>/checkout</td>
+                            <td>1,980</td>
+                            <td>2m 30s</td>
+                            <td>12%</td>
+                            <td>1,420</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-12 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0">
+                <h5 class="mb-3">Visitors by Browser</h5>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <div id="chart-browser" style="width:100%; height:400px; min-height:400px;"></div>
+
+                <ul class="list-group list-group-flush">
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/dist/images/logos/browser/chrome.svg" width="20" height="20" alt="Chrome">
+                            <span>Chrome</span>
+                        </div>
+                        <span class="fw-semibold">12,840</span>
+                    </li>
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/dist/images/logos/browser/safari.svg" width="20" height="20" alt="Safari">
+                            <span>Safari</span>
+                        </div>
+                        <span class="fw-semibold">6,210</span>
+                    </li>
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/dist/images/logos/browser/firefox.svg" width="20" height="20" alt="Firefox">
+                            <span>Firefox</span>
+                        </div>
+                        <span class="fw-semibold">3,120</span>
+                    </li>
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/dist/images/logos/browser/edge.svg" width="20" height="20" alt="Edge">
+                            <span>Edge</span>
+                        </div>
+                        <span class="fw-semibold">2,570</span>
+                    </li>
+
+                    <li class="list-group-item d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center gap-2">
+                            <img src="/dist/images/logos/browser/opera.svg" width="20" height="20" alt="Opera">
+                            <span>Opera</span>
+                        </div>
+                        <span class="fw-semibold">620</span>
+                    </li>
+
+                </ul>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row">
+        <div class="col-lg-4 col-md-12 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0">
+                Top Traffic Sources (High Business Value)
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0">
+                Countries / Geo Breakdown (Matches Your Map)
+            </div>
+        </div>
+        <div class="col-lg-4 col-md-12 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0">
+                Device Breakdown (UX Optimization)
+            </div>
+    </div>
+
+    <!--div class="row">
+        <div class="col-lg-8 col-md-12 col-sm-12 mt-4">
+            <div class="tile tile-body rounded-0">
+                <h6 class="mb-3 fw-bold">Visitor Distribution Map</h6>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <div id="chartdiv" style="width:100%; height:560px; min-height:560px;"></div>
+            </div>
+        </div>
+    </div-->
+
 </div>
 
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/worldHigh.js"></script>
+
+
+
+<script>
+    am5.ready(function () {
+        const root = am5.Root.new("chart-registrations");
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // ----- Chart (MUST be created before axes/series) -----
+        const chart = root.container.children.push(
+            am5xy.XYChart.new(root, {
+                panX: false,
+                panY: false,
+                wheelX: "none",
+                wheelY: "none",
+                layout: root.verticalLayout
+            })
+        );
+
+        // X Axis (Month)
+        const xAxis = chart.xAxes.push(
+            am5xy.DateAxis.new(root, {
+                baseInterval: { timeUnit: "month", count: 1 },
+                renderer: am5xy.AxisRendererX.new(root, { minGridDistance: 40 }),
+                tooltip: am5.Tooltip.new(root, {})
+            })
+        );
+
+        // Show month labels like "Feb 2026"
+        xAxis.get("dateFormats")["month"] = "MMM yyyy";
+        xAxis.get("periodChangeDateFormats")["month"] = "MMM yyyy";
+
+        // Y Axis (Counts)
+        const yAxis = chart.yAxes.push(
+            am5xy.ValueAxis.new(root, {
+                renderer: am5xy.AxisRendererY.new(root, {})
+            })
+        );
+
+        // ----- Visits Series (Bottom Stack) -----
+        const visitsSeries = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+                name: "Visits",
+                xAxis,
+                yAxis,
+                valueYField: "visits",
+                valueXField: "date",
+                stacked: true,
+                tooltip: am5.Tooltip.new(root, {
+                    labelText: "Visits: {valueY.formatNumber('#,###')}"
+                })
+            })
+        );
+
+        visitsSeries.columns.template.setAll({
+            width: am5.percent(60),
+            fill: am5.color("#674ea7"),
+            stroke: am5.color("#674ea7"),
+            strokeOpacity: 0.5
+        });
+
+        // ----- Registrations Series (Top Stack) -----
+        const registrationsSeries = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+                name: "Registrations",
+                xAxis,
+                yAxis,
+                valueYField: "registrations",
+                valueXField: "date",
+                stacked: true,
+                tooltip: am5.Tooltip.new(root, {
+                    labelText: "Registrations: {valueY.formatNumber('#,###')}"
+                })
+            })
+        );
+
+        registrationsSeries.columns.template.setAll({
+            width: am5.percent(60),
+            fill: am5.color("#e47fba"),
+            stroke: am5.color("#e47fba"),
+            strokeOpacity: 0.5
+        });
+
+        // Cursor
+        const cursor = chart.set("cursor", am5xy.XYCursor.new(root, { xAxis }));
+        cursor.lineY.set("visible", false);
+
+        // Legend
+        const legend = chart.children.push(
+            am5.Legend.new(root, {
+                centerX: am5.p50,
+                x: am5.p50,
+                marginTop: 12
+            })
+        );
+        // const legend = chart.children.push(
+        //     am5.Legend.new(root, {
+        //         centerX: am5.p50,
+        //         x: am5.p50
+        //     })
+        // );
+        legend.data.setAll(chart.series.values);
+
+        // ----- Load data AFTER series exist -----
+        fetch("/platform/analytics/visits?months=12")
+            .then(r => {
+                if (!r.ok) throw new Error("Failed to load /platform/analytics/visits");
+                return r.json();
+            })
+            .then(data => {
+                visitsSeries.data.setAll(data);
+                registrationsSeries.data.setAll(data);
+
+                // Animate after async load
+                visitsSeries.appear(800);
+                registrationsSeries.appear(800);
+                chart.appear(800, 100);
+            })
+            .catch(console.error);
+
+        window.addEventListener("beforeunload", () => root.dispose());
+    });
+</script>
+
+
+
+
+<!-- BEGIN Browser distribution chart -->
+<script>
+    am5.ready(function () {
+        const root = am5.Root.new("chart-browser");
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Chart
+        const chart = root.container.children.push(
+            am5percent.PieChart.new(root, {
+                layout: root.verticalLayout,
+                innerRadius: am5.percent(60) // donut
+            })
+        );
+
+        // Series
+        const series = chart.series.push(
+            am5percent.PieSeries.new(root, {
+                name: "Browsers",
+                valueField: "value",
+                categoryField: "browser",
+                alignLabels: false
+            })
+        );
+
+        async function loadBrowserData() {
+            try {
+                const response = await fetch("/platform/analytics/browser?days=30");
+                if (!response.ok) throw new Error("API error");
+
+                const data = await response.json();
+                series.data.setAll(data);
+
+            } catch (e) {
+                console.error(e);
+            }
+        }
+        loadBrowserData();
+
+        // Tooltips
+        series.slices.template.setAll({
+            tooltipText: "{category}: {value.formatNumber('#,###')} ({valuePercentTotal.formatNumber('0.0')}%)",
+            strokeOpacity: 0.4
+        });
+
+        // Labels inside
+        series.labels.template.setAll({
+            text: "{valuePercentTotal.formatNumber('0.0')}%",
+            oversizedBehavior: "truncate",
+            fillOpacity: 0.9
+        });
+
+        series.ticks.template.setAll({
+            visible: false
+        });
+
+        // Legend
+        const legend = chart.children.push(
+            am5.Legend.new(root, {
+                centerX: am5.p50,
+                x: am5.p50,
+                marginTop: 20
+            })
+        );
+
+        legend.data.setAll(series.dataItems);
+
+        // Animate
+        series.appear(800, 100);
+
+        // Cleanup
+        window.addEventListener("beforeunload", () => root.dispose());
+    });
+</script>
+<!-- END Browser distribution chart -->
+
+
+<!-- BEGIN Map chart -->
+<script>
+    am5.ready(function () {
+        const root = am5.Root.new("chartdiv");
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        const data = [
+            { id: "BG", value: 14840 },
+            { id: "DE", value: 12840 },
+            { id: "FR", value: 10210 },
+            { id: "IT", value: 9340 },
+            { id: "ES", value: 8750 },
+            { id: "GB", value: 18110 },
+            { id: "NL", value: 4980 },
+            { id: "BE", value: 3120 },
+            { id: "CH", value: 2840 },
+            { id: "AT", value: 2570 },
+            { id: "SE", value: 2210 },
+            { id: "NO", value: 1890 },
+            { id: "DK", value: 1760 },
+            { id: "FI", value: 1650 },
+            { id: "PL", value: 4120 },
+            { id: "CZ", value: 1940 },
+            { id: "SK", value: 980 },
+            { id: "HU", value: 1240 },
+            { id: "RO", value: 1410 },
+            { id: "GR", value: 1320 },
+            { id: "PT", value: 1180 },
+            { id: "IE", value: 1050 }
+        ];
+
+        const countryCenters = {
+            BG: { lat: 42.7339, lon: 25.4858 },
+            DE: { lat: 51.1657, lon: 10.4515 },
+            FR: { lat: 46.2276, lon: 2.2137 },
+            IT: { lat: 41.8719, lon: 12.5674 },
+            ES: { lat: 40.4637, lon: -3.7492 },
+            GB: { lat: 55.3781, lon: -3.4360 },
+            NL: { lat: 52.1326, lon: 5.2913 },
+            BE: { lat: 50.5039, lon: 4.4699 },
+            CH: { lat: 46.8182, lon: 8.2275 },
+            AT: { lat: 47.5162, lon: 14.5501 },
+            SE: { lat: 60.1282, lon: 18.6435 },
+            NO: { lat: 60.4720, lon: 8.4689 },
+            DK: { lat: 56.2639, lon: 9.5018 },
+            FI: { lat: 61.9241, lon: 25.7482 },
+            PL: { lat: 51.9194, lon: 19.1451 },
+            CZ: { lat: 49.8175, lon: 15.4730 },
+            SK: { lat: 48.6690, lon: 19.6990 },
+            HU: { lat: 47.1625, lon: 19.5033 },
+            RO: { lat: 45.9432, lon: 24.9668 },
+            GR: { lat: 39.0742, lon: 21.8243 },
+            PT: { lat: 39.3999, lon: -8.2245 },
+            IE: { lat: 53.4129, lon: -8.2439 }
+        };
+
+        // kept (not used for filtering here)
+        const europeISO2 = [
+            "AL","AD","AT","BA","BE","BG","BY","CH","CY","CZ","DE","DK","EE","ES","FI","FR","GB",
+            "GR","HR","HU","IE","IS","IT","LI","LT","LU","LV","MC","MD","ME","MK","MT","NL","NO",
+            "PL","PT","RO","RS","SE","SI","SK","SM","TR","UA","VA"
+        ];
+
+        const chart = root.container.children.push(
+            am5map.MapChart.new(root, {
+                projection: am5map.geoMercator(),
+                panX: "translateX",
+                panY: "translateY",
+                wheelY: "zoom"
+            })
+        );
+
+        const polygonSeries = chart.series.push(
+            am5map.MapPolygonSeries.new(root, {
+                geoJSON: am5geodata_worldHigh,
+                valueField: "value",
+                calculateAggregates: true
+            })
+        );
+
+        polygonSeries.mapPolygons.template.setAll({
+            tooltipText: "{name}\nVisitors: {value.formatNumber('#,###')}",
+            interactive: true,
+            strokeOpacity: 0.6,
+            strokeWidth: 1,
+            fillOpacity: 1,
+            fill: am5.color("#e8e8e8")
+        });
+
+        polygonSeries.mapPolygons.template.states.create("hover", {
+            strokeOpacity: 1,
+            strokeWidth: 2
+        });
+
+        polygonSeries.data.setAll(data);
+
+        // Heat coloring for countries that have "value"
+        polygonSeries.set("heatRules", [{
+            target: polygonSeries.mapPolygons.template,
+            dataField: "value",
+            key: "fill",
+            min: am5.color("#efedf6"),
+            max: am5.color("#674ea7")
+        }]);
+
+        // Legend
+        const heatLegend = chart.children.push(
+            am5.HeatLegend.new(root, {
+                orientation: "horizontal",
+                startColor: am5.color("#efedf6"),
+                endColor: am5.color("#674ea7"),
+                startText: "Low",
+                endText: "High",
+                stepCount: 5,
+                x: am5.p50,
+                centerX: am5.p50,
+                y: am5.p100,
+                centerY: am5.p100,
+                dy: -10
+            })
+        );
+
+        polygonSeries.events.on("datavalidated", function () {
+            heatLegend.set("startValue", polygonSeries.getPrivate("valueLow"));
+            heatLegend.set("endValue", polygonSeries.getPrivate("valueHigh"));
+
+            // Center Austria (adjust zoom to taste)
+            chart.zoomToGeoPoint({ latitude: 47.5162, longitude: 14.5501 }, 12, true);
+        });
+
+        polygonSeries.mapPolygons.template.events.on("pointerover", (ev) => {
+            const di = ev.target.dataItem;
+            if (!di) return;
+            const v = di.get("value");
+            if (typeof v === "number") heatLegend.showValue(v);
+        });
+
+        polygonSeries.mapPolygons.template.events.on("pointerout", () => {
+            heatLegend.showValue(null);
+        });
+
+        // ---- Dots with numbers ----
+        const pointSeries = chart.series.push(
+            am5map.MapPointSeries.new(root, {
+                // Keep it explicit & future-proof
+                // (not strictly required when using geometry, but harmless)
+                longitudeField: "longitude",
+                latitudeField: "latitude"
+            })
+        );
+
+        const markerData = data
+            .map(d => {
+                const c = countryCenters[d.id];
+                if (!c) return null;
+
+                return {
+                    id: d.id,
+                    value: d.value,
+                    geometry: {
+                        type: "Point",
+                        coordinates: [c.lon, c.lat] // IMPORTANT: [lon, lat]
+                    }
+                };
+            })
+            .filter(Boolean);
+
+        pointSeries.data.setAll(markerData);
+
+        pointSeries.bullets.push(function (root, series, dataItem) {
+            const value = dataItem.dataContext.value ?? 0;
+
+            // Just a number (no circle)
+            const label = am5.Label.new(root, {
+                text: String(value),
+                centerX: am5.p50,
+                centerY: am5.p50,
+                fontSize: 11,
+                fontWeight: "600",
+                fill: am5.color(0x000000), // pick whatever contrasts your map
+                // optional: make it readable on colored countries
+                background: am5.RoundedRectangle.new(root, {
+                    fill: am5.color(0xffffff),
+                    fillOpacity: 0.7,
+                    cornerRadiusTL: 0,
+                    cornerRadiusTR: 0,
+                    cornerRadiusBL: 0,
+                    cornerRadiusBR: 0
+                }),
+                paddingLeft: 5,
+                paddingRight: 5,
+                paddingTop: 2,
+                paddingBottom: 2,
+                tooltipText: "{id}\nVisitors: {value.formatNumber('#,###')}"
+            });
+
+            return am5.Bullet.new(root, { sprite: label });
+        });
+
+        chart.appear(800, 100);
+
+        window.addEventListener("beforeunload", () => root.dispose());
+    });
+</script>

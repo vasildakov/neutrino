@@ -1,7 +1,8 @@
 <?php
 
-namespace Neutrino\Mail;
+declare(strict_types=1);
 
+namespace Neutrino\Mail;
 
 use Laminas\Mail\Transport\Smtp;
 use Laminas\Mail\Transport\SmtpOptions;

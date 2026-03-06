@@ -206,7 +206,7 @@ class User implements UserInterface
         return false;
     }
 
-    private function getScope(): string
+    public function getScope(): string
     {
         return $this->hasPlatformRole() ? Role::SCOPE_PLATFORM : Role::SCOPE_DASHBOARD;
     }

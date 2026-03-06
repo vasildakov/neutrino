@@ -1,44 +1,170 @@
+<?php
+/**
+ * @var PhpRenderer $this
+ * @var string $content
+ * @method string asset(string $path)
+ * @method string partial(string $name, array $values = [])
+ */
+
+use Laminas\View\Renderer\PhpRenderer;
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Neutrino</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title><?= $this->headTitle('Neutrino')->setSeparator(' - ')->renderTitle(); ?></title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="<?= $this->asset('css/fonts/ubuntu.css') ?>" >
+    <link rel="stylesheet" href="<?= $this->asset('css/fonts/roboto.css') ?>" >
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="<?= $this->asset('css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?= $this->asset('sandbox/assets/css/plugins.css') ?>">
+    <link rel="stylesheet" href="<?= $this->asset('sandbox/assets/css/style.css') ?>">
+
 </head>
 <body>
+    <main>
 
-<main>
-    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
-        <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto link-body-emphasis text-decoration-none">
-            <img
-                    src="/assets/default/img/bootstrap-logo-black.svg"
-                    width="40" height="32" alt="Bootstrap logo"
-                    class="bi me-2 ms-2"
-            >
-            <span class="fs-4">Neutrino</span> </a>
-        <ul class="nav nav-pills">
-            <li class="nav-item">
-                <a href="#" class="nav-link active" aria-current="page">Home</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">Features</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">Pricing</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">FAQs</a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">About</a>
-            </li>
+        <?=$this->partial('sandbox::partial/header');?>
 
-        </ul>
-    </header>
 
-    <div>
-        <?=$this->content;?>
-    </div>
-    
-</main>
+        <div>
+            <?=$this->content;?>
+        </div>
+
+
+        <div>
+            <?=$this->partial('sandbox::partial/footer');?>
+        </div>
+
+        <div id="consent-banner" class="position-fixed bottom-0 start-0 end-0 p-3 bg-body border-top shadow d-none" style="z-index: 1080;">
+            <div class="container d-flex flex-column flex-md-row gap-2 align-items-md-center justify-content-between">
+                <div>
+                    <strong>Cookies</strong>
+                    <div class="small text-muted">
+                        We use essential cookies and optional analytics/marketing to improve Neutrino. You can change anytime.
+                    </div>
+                </div>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-secondary btn-sm" id="consent-settings">Settings</button>
+                    <button class="btn btn-outline-secondary btn-sm" id="consent-reject">Reject all</button>
+                    <button class="btn btn-primary btn-sm" id="consent-accept">Accept all</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+    <script src="<?= $this->asset('sandbox/assets/js/plugins.js') ?>"></script>
+    <script src="<?= $this->asset('sandbox/assets/js/theme.js') ?>"></script>
+
+    <script>
+        (function () {
+            const CONSENT_COOKIE = 'neutrino_consent';
+
+            function getCookie(name) {
+                const m = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+                return m ? decodeURIComponent(m[2]) : null;
+            }
+
+            function hasConsentToken() {
+                return !!getCookie(CONSENT_COOKIE);
+            }
+
+            function showBanner() {
+                document.getElementById('consent-banner')?.classList.remove('d-none');
+            }
+
+            function hideBanner() {
+                document.getElementById('consent-banner')?.classList.add('d-none');
+            }
+
+            function activateScripts(category) {
+                document.querySelectorAll(`script[type="text/plain"][data-consent="${category}"]`)
+                    .forEach(el => {
+                        const s = document.createElement('script');
+                        // Copy inline content
+                        if (el.textContent) s.text = el.textContent;
+                        // Copy src if you prefer external scripts
+                        const src = el.getAttribute('data-src');
+                        if (src) s.src = src;
+                        document.head.appendChild(s);
+                    });
+            }
+
+            function deleteTrackingCookies() {
+                // Add your actual cookies here:
+                const names = ['_ga', '_gid', '_fbp'];
+                names.forEach(n => document.cookie = `${n}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`);
+            }
+
+            function enforceConsent(purposes) {
+                if (purposes.analytics) activateScripts('analytics');
+                if (purposes.marketing) activateScripts('marketing');
+
+                // On withdrawal: stop & delete
+                if (!purposes.analytics && !purposes.marketing) {
+                    deleteTrackingCookies();
+                    // Examples: set global flags for your tracking layer
+                    window.__analyticsEnabled = false;
+                    window.__marketingEnabled = false;
+                }
+            }
+
+            async function saveConsent(purposes) {
+                const res = await fetch('/api/consent/save', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({purposes})
+                });
+                if (!res.ok) throw new Error('Consent save failed');
+                const json = await res.json();
+                enforceConsent(json.purposes);
+                hideBanner();
+            }
+
+            async function revokeConsent() {
+                const res = await fetch('/api/consent/revoke', { method: 'POST' });
+                if (!res.ok) throw new Error('Consent revoke failed');
+                const json = await res.json();
+                enforceConsent(json.purposes);
+                hideBanner();
+            }
+
+            // boot
+            if (!hasConsentToken()) {
+                showBanner();
+            } else {
+                // If you want, read purposes via server-rendered attribute, or keep it simple:
+                // We can’t decode signed cookie client-side (by design), so we just assume:
+                // - server will enforce, and optional scripts won't exist unblocked.
+                // If you want client enforcement too, you can add a tiny endpoint /api/consent/me
+                // that returns current purposes.
+            }
+
+            document.getElementById('consent-accept')?.addEventListener('click', () => {
+                saveConsent({essential:true, functional:true, analytics:true, marketing:true}).catch(console.error);
+            });
+
+            document.getElementById('consent-reject')?.addEventListener('click', () => {
+                revokeConsent().catch(console.error);
+            });
+
+            document.getElementById('consent-settings')?.addEventListener('click', () => {
+                // optional: open a modal settings UI that loads /api/consent/config
+                // keep banner visible; implement modal later
+                alert('Open settings modal (load /api/consent/config).');
+            });
+
+        })();
+    </script>
 
 </body>
 </html>

@@ -10,10 +10,10 @@ return [
         'executed_at_column_name' => 'executed_at',
     ],
     'migrations_paths'        => [
-        'Migrations' => 'data/migrations',
+        'Neutrino\\Migrations' => 'data/migrations',
     ],
-    'all_or_nothing'          => true,
-    'transactional'           => true,
+    'all_or_nothing'          => false, // Disabled to avoid SAVEPOINT issues
+    'transactional'           => false, // Temporarily disabled for troubleshooting
     'check_database_platform' => true,
     'organize_migrations'     => 'none',
 ];

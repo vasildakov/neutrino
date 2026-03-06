@@ -15,6 +15,7 @@ namespace Neutrino\Handler\Cart;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Mezzio\Router\RouterInterface;
+use Neutrino\Repository\UserRepository;
 use Neutrino\Service\Cart\CartService;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
@@ -40,6 +41,9 @@ final class AddToCartHandlerFactory
         $cartService = $container->get(CartService::class);
         assert($cartService instanceof CartService);
 
-        return new AddToCartHandler($router, $em, $cartService);
+        $userRepository = $container->get(UserRepository::class);
+        assert($userRepository instanceof UserRepository);
+
+        return new AddToCartHandler($router, $em, $cartService, $userRepository);
     }
 }

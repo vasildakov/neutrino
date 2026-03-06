@@ -1,6 +1,11 @@
 parameters:
     level: 6
 
+    parameters:
+        excludePaths:
+          - templates
+          - **/*.phtml
+
     paths:
         - modules
 

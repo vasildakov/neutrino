@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * This file is part of Neutrino.
  *
@@ -9,10 +10,11 @@ declare(strict_types=1);
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+
 namespace Neutrino\View\Helper;
 
-use Mezzio\Authentication\UserInterface;
 use Mezzio\Authentication\DefaultUser;
+use Mezzio\Authentication\UserInterface;
 
 use function is_array;
 
@@ -22,6 +24,11 @@ final class Avatar
     {
     }
 
+    /**
+     * Get user avatar URL
+     *
+     * @param UserInterface|array{details?: array{avatar?: string}} $user
+     */
     public function __invoke(UserInterface|array $user): string
     {
         if ($user instanceof DefaultUser) {

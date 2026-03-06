@@ -14,6 +14,8 @@ declare(strict_types=1);
 namespace Neutrino\Handler\Login;
 
 use Laminas\Diactoros\Response\HtmlResponse;
+use Mezzio\Csrf\CsrfMiddleware;
+use Mezzio\Flash\FlashMessageMiddleware;
 use Mezzio\Session\SessionMiddleware;
 use Mezzio\Template\TemplateRendererInterface;
 use Neutrino\Mail\SendTestEmail;
@@ -37,26 +39,32 @@ final class LoginFormHandler implements RequestHandlerInterface, LoggerAwareInte
 
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
-        $this->sendTestEmail->send('vasildakov@gmail.com');
+        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
+        $guard   = $request->getAttribute(CsrfMiddleware::GUARD_ATTRIBUTE);
+        $flash   = $request->getAttribute(FlashMessageMiddleware::FLASH_ATTRIBUTE);
+
+        //$this->sendTestEmail->send('vasildakov@gmail.com');
 
         $locale = $request->getAttribute('routeLocale', 'en');
 
-        // Get Mezzio session from request attribute
-        $session = $request->getAttribute(SessionMiddleware::SESSION_ATTRIBUTE);
-
         // just testing Mezzio session usage
-        $session->set('test', 'some-session-value');
+        //$session->set('test', 'some-session-value');
 
-        $content = $this->template->render('sandbox::login', [
-            'locale' => $locale,
-        ]);
 
         $this->logger->info('Login form shown.');
 
-        return new HtmlResponse($this->template->render('layout::sandbox', [
-            'content' => $content,
-            'data'    => [],
-        ]));
+        $token = $guard->generateToken();
+        $error = $flash?->getFlash('error') ?? null;
+
+        return new HtmlResponse($this->template->render(
+            'sandbox::login',
+            [
+                'layout' => 'layout::sandbox',
+                'title'  => 'Sign In',
+                'error'  => $error,
+                'csrf'   => $token,
+            ],
+        ));
     }
 
     public function setLogger(LoggerInterface $logger): void

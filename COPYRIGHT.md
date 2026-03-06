@@ -1,1 +1,2 @@
-Copyright (c) 2020 Laminas Project a Series of LF Projects, LLC. (https://getlaminas.org/)
+Copyright (c) 2026 Neutrino (https://neutrino.bg/) and Vasil Dakov (https://vasildakov.com/)
+

@@ -1,22 +1,243 @@
-<div class="px-4 pt-5 my-5 text-center border-bottom">
-    <h1 class="display-4 fw-bold text-body-emphasis">Neutrino SaaS</h1>
-    <div class="col-lg-6 mx-auto">
-        <p class="lead mb-4">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful JavaScript plugins.</p>
-        <div class="d-grid gap-2 d-sm-flex justify-content-sm-center mb-5">
-            <a href="<?=$this->url('register.form');?>" type="button" class="btn btn-primary btn-lg px-4 me-sm-3">Register</a>
-            <a href="<?=$this->url('login.form');?>"type="button" class="btn btn-danger btn-lg px-4">Login</a>
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var array<\Neutrino\Domain\Billing\Plan> $plans
+ * @var string $queueTimestampDisplay
+ * @method string translate(string $message, string|null $textDomain = 'default', string|null $locale = null)
+ */
+?>
+
+<section class="wrapper bg-soft-primary">
+    <div class="container pt-10 pt-lg-12 pt-xl-12 pt-xxl-10 pb-lg-10 pb-xl-10 pb-xxl-0">
+        <div class="row gx-md-8 gx-xl-12 gy-10 align-items-center text-center text-lg-start">
+            <div class="col-lg-6" data-cues="slideInDown" data-group="page-title" data-delay="900" data-disabled="true">
+                <h1 class="display-1 mb-4 me-xl-5 mt-lg-n10" data-cue="slideInDown" data-group="page-title" data-delay="900" data-show="true" style="animation-name: slideInDown; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 900ms; animation-direction: normal; animation-fill-mode: both;"><span style="font-weight: 400;">The smart platform <br class="d-none d-md-block d-lg-none">for </span><span style="font-weight: 700;">small <span class="underline-3 style-3 yellow">business</span></span></h1>
+                <p class="lead fs-24 lh-sm mb-7 pe-xxl-15" data-cue="slideInDown" data-group="page-title" data-delay="900" data-show="true" style="animation-name: slideInDown; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 1200ms; animation-direction: normal; animation-fill-mode: both;">We help our clients to increase their website <br class="d-none d-md-block d-lg-none"> traffic, rankings and visibility in search results.</p>
+                <div class="d-inline-flex me-2" data-cue="slideInDown" data-group="page-title" data-delay="900" data-show="true" style="animation-name: slideInDown; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 1500ms; animation-direction: normal; animation-fill-mode: both;"><a href="#" class="btn btn-lg btn-grape rounded">Try it for Free</a></div>
+                <div class="d-inline-flex" data-cue="slideInDown" data-group="page-title" data-delay="900" data-show="true" style="animation-name: slideInDown; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 1800ms; animation-direction: normal; animation-fill-mode: both;"><a href="#" class="btn btn-lg btn-outline-grape rounded">Demo</a></div>
+                <p class="fs-14 text-muted mt-4 mb-0" data-cue="slideInDown" data-group="page-title" data-delay="900" data-show="true" style="animation-name: slideInDown; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 2100ms; animation-direction: normal; animation-fill-mode: both;">
+                    Last queued job: <?= $this->escapeHtml($queueTimestampDisplay) ?>
+                </p>
+            </div>
+            <!--/column -->
+            <div class="col-10 col-md-7 mx-auto col-lg-6 col-xl-5 ms-xl-5">
+                <img class="img-fluid mb-n12 mb-md-n14 mb-lg-n19"
+                     src="<?= $this->asset('sandbox/assets/img/illustrations/3d9.png') ?>"
+                     srcset="<?= $this->asset('sandbox/assets/img/illustrations/3d9@2x.png') ?> 2x"
+                     data-cue="fadeIn" data-delay="300" alt=""
+                     data-show="true" style="animation-name: fadeIn; animation-duration: 700ms; animation-timing-function: ease; animation-delay: 300ms; animation-direction: normal; animation-fill-mode: both;">
+            </div>
+            <!--/column -->
         </div>
+        <!-- /.row -->
     </div>
-    <div class="overflow-hidden" style="max-height: 30vh;">
-        <div class="container px-5">
-            <img
-                src="/assets/default/img/bootstrap-docs.png"
-                class="img-fluid border rounded-3 shadow-lg mb-4"
-                alt="Example image"
-                width="700"
-                height="500"
-                loading="lazy"
-            >
+    <!-- /.container -->
+    <figure>
+        <img src="/<?= ltrim($this->asset('sandbox/assets/img/photos/clouds.png'), '/') ?>" alt="">
+    </figure>
+</section>
+
+
+
+
+<?=$this->partial('sandbox::partial/features');?>
+
+
+<section id="snippet-3" class="wrapper bg-light wrapper-border">
+    <div class="container pt-15 pt-md-17 pb-13 pb-md-15">
+        <h2 class="display-5 mb-7 text-center"><?= $this->translate('Our Pricing') ?></h2>
+        <div class="pricing-wrapper">
+            <div class="pricing-switcher-wrapper switcher">
+                <p class="mb-0 pe-3"><?= $this->translate('Monthly') ?></p>
+                <div class="pricing-switchers">
+                    <div class="pricing-switcher pricing-switcher-active"></div>
+                    <div class="pricing-switcher"></div>
+                    <div class="switcher-button bg-primary"></div>
+                </div>
+                <p class="mb-0 ps-3"><?= $this->translate('Yearly') ?> <span class="text-red">(<?= $this->translate('Save 30%') ?>)</span></p>
+            </div>
+            <div class="row gx-0 gy-6 mt-2">
+                <?php foreach ($plans as $plan):
+                    $isHighlighted = ($plan->getKey() === 'growth');
+                    $isEnterprise = ($plan->getKey() === 'enterprise');
+                    $features = $plan->getFeatures() ?? [];
+                ?>
+                <div class="col-md-6 col-lg-3">
+                    <div class="pricing card h-100 d-flex flex-column <?= $isHighlighted ? 'bg-soft-primary' : 'shadow-none' ?>">
+                        <div class="card-body d-flex flex-column h-100">
+                            <h4 class="card-title"><?= $plan->getName() ?></h4>
+                            <div class="prices text-dark">
+                                <div class="price justify-content-start price-show">
+                                    <span class="price-currency">€</span>
+                                    <span class="price-value"><?= (int)$plan->getPriceMonthly() ?></span>
+                                    <span class="price-duration">mo</span>
+                                </div>
+                                <div class="price justify-content-start price-hide">
+                                    <span class="price-currency">€</span>
+                                    <span class="price-value"><?= (int)$plan->getPriceYearly() ?></span>
+                                    <span class="price-duration">yr</span>
+                                </div>
+                            </div>
+                            <!--/.prices -->
+                            <ul class="icon-list bullet-bg <?= $isHighlighted ? 'bullet-primary' : 'bullet-soft-primary' ?> mt-7 mb-8">
+                                <?php foreach ($features as $feature): ?>
+                                <li>
+                                    <i class="uil <?= $feature['available'] ? 'uil-check' : 'uil-times bullet-soft-red' ?>"></i>
+                                    <span><?= $feature['text'] ?></span>
+                                </li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <div class="mt-auto">
+                                <?php if ($isEnterprise): ?>
+                                    <a href="/contact" class="btn btn-outline-primary"><?= $this->translate('Contact Sales') ?></a>
+                                <?php else: ?>
+                                    <button
+                                            data-plan-id="<?= $plan->getId() ?>"
+                                            data-plan-name="<?= $plan->getName() ?>"
+                                            class="btn <?= $isHighlighted ? 'btn-primary' : 'btn-soft-primary' ?> add-to-cart-btn"><?= $this->translate('Add to Cart') ?></button>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <!--/.card-body -->
+                    </div>
+                    <!--/.pricing -->
+                </div>
+                <!--/column -->
+                <?php endforeach; ?>
+            </div>
+            <!--/.row -->
         </div>
+        <!--/.pricing-wrapper -->
     </div>
-</div>
+    <!-- /.container -->
+
+    <!-- /.container -->
+</section>
+
+<script>
+    // Add to cart functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const addToCartButtons = document.querySelectorAll('.add-to-cart-btn');
+        const pricingSwitchers = document.querySelector('.pricing-switchers');
+
+        // Track current cart state
+        let cartHasPlan = false;
+        let currentPlanName = '';
+        let currentBillingPeriod = '';
+
+        // Locale-aware base path
+        const basePath = (function () {
+            // Prefer server-provided value if you output it
+            if (window.APP_LOCALE_BASE) return window.APP_LOCALE_BASE; // e.g. "/en"
+
+            // Fallback: detect from URL (/en/..., /bg/...)
+            const m = window.location.pathname.match(/^\/(en|bg)(\/|$)/);
+            return m ? `/${m[1]}` : '';
+        })();
+
+
+        addToCartButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const planId = this.getAttribute('data-plan-id');
+                const planName = this.getAttribute('data-plan-name');
+
+                // Check if yearly pricing is active
+                const isYearly = pricingSwitchers.querySelector('.pricing-switcher:nth-child(2)').classList.contains('pricing-switcher-active');
+                const billingPeriod = isYearly ? 'yearly' : 'monthly';
+
+                // Proceed with adding to cart (will automatically replace existing plan)
+                addPlanToCart(this, planId, planName, billingPeriod);
+            });
+        });
+
+        function addPlanToCart(button, planId, planName, billingPeriod) {
+            // Disable button while processing
+            button.disabled = true;
+            const originalText = button.textContent;
+            button.textContent = '<?= $this->translate('Adding...') ?>';
+
+            // Add to cart via AJAX
+            fetch('/cart/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    'item_type': 'plan',
+                    'item_id': planId,
+                    'billing_period': billingPeriod
+                })
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                console.log('Response headers:', response.headers.get('content-type'));
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                // Check if response is JSON
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    // Not JSON, get text to see what the error is
+                    return response.text().then(text => {
+                        console.error('Non-JSON response:', text);
+                        throw new Error('Server returned non-JSON response');
+                    });
+                }
+            })
+            .then(data => {
+                console.log('Response data:', data);
+
+                if (data.success) {
+                    // Update cart state from server response
+                    if (data.currentPlan) {
+                        cartHasPlan = true;
+                        currentPlanName = data.currentPlan.name;
+                        currentBillingPeriod = data.currentPlan.billing_period;
+                    } else {
+                        cartHasPlan = false;
+                        currentPlanName = '';
+                        currentBillingPeriod = '';
+                    }
+
+                    // Show success message
+                    button.textContent = '✓ <?= $this->translate('Added!') ?>';
+                    button.classList.remove('btn-primary', 'btn-soft-primary');
+                    button.classList.add('btn-success');
+
+                    // Show message if plan was replaced
+                    if (data.replaced) {
+                        const periodText = billingPeriod === 'yearly' ? '<?= $this->translate('Yearly') ?>' : '<?= $this->translate('Monthly') ?>';
+                        const message = '<?= $this->translate('Plan updated to') ?> ' + planName + ' (' + periodText + ')';
+                        const toast = document.createElement('div');
+                        toast.className = 'alert alert-success position-fixed top-0 start-50 translate-middle-x mt-3';
+                        toast.style.zIndex = '9999';
+                        toast.innerHTML = '<i class="uil uil-check-circle"></i> ' + message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    // Redirect to cart after 1 second
+                    setTimeout(() => {
+                        window.location.href = `${basePath}/cart`;
+                    }, 1000);
+                } else {
+                    throw new Error(data.error || 'Failed to add to cart');
+                }
+            })
+            .catch(error => {
+                console.error('Error details:', error);
+                console.error('Error message:', error.message);
+                button.textContent = originalText;
+                button.disabled = false;
+                alert('<?= $this->translate('Error adding to cart. Please try again.') ?>\n\nDetails: ' + error.message);
+            });
+        }
+    });
+</script>
