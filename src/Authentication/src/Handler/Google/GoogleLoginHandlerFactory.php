@@ -2,6 +2,15 @@
 
 declare(strict_types=1);
 
+/*
+ * This file is part of Neutrino.
+ *
+ * (c) Vasil Dakov <vasildakov@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Neutrino\Authentication\Handler\Google;
 
 use League\OAuth2\Client\Provider\Google;
@@ -17,12 +26,12 @@ final class GoogleLoginHandlerFactory
      */
     public function __invoke(ContainerInterface $container): GoogleLoginHandler
     {
-        $config = $container->get('config')['google_oauth'] ?? [];
+        $config = $container->get('config')['oauth']['google'] ?? [];
 
         return new GoogleLoginHandler(
             provider: $container->get(Google::class),
             scopes: (array) ($config['scopes'] ?? ['openid', 'email', 'profile']),
-            successRedirectPath: 'https://neutrino.dev:8443/auth/google/callback',
+            successRedirectPath: '/auth/google/callback',
         );
     }
 }

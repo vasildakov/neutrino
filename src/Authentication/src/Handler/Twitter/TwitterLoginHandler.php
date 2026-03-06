@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neutrino\Authentication\Handler\Twitter;
 
 use Laminas\Diactoros\Response\RedirectResponse;

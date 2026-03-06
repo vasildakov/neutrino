@@ -1,21 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Neutrino\Authentication\Twitter;
 
 use League\OAuth2\Client\Provider\AbstractProvider;
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Smolblog\OAuth2\Client\Provider\Twitter;
 
-class TwitterProviderFactory
+final class TwitterProviderFactory
 {
-    public function __invoke(ContainerInterface $c): AbstractProvider
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function __invoke(ContainerInterface $container): AbstractProvider
     {
-        $cfg = $c->get('config')['twitter_oauth'] ?? [];
+        $config = $container->get('config')['oauth']['twitter'] ?? [];
 
         return new Twitter([
-            'clientId'     => (string) ($cfg['client_id'] ?? ''),
-            'clientSecret' => (string) ($cfg['client_secret'] ?? ''),
-            'redirectUri'  => (string) ($cfg['redirect_uri'] ?? ''),
+            'clientId'     => (string) ($config['client_id'] ?? ''),
+            'clientSecret' => (string) ($config['client_secret'] ?? ''),
+            'redirectUri'  => (string) ($config['redirect_uri'] ?? ''),
         ]);
     }
 }
