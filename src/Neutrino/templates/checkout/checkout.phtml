@@ -1,0 +1,422 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Neutrino\Domain\Cart\Cart $cart
+ * @var \Doctrine\Common\Collections\Collection<int, \Neutrino\Domain\Cart\CartItem> $items
+ * @var \Neutrino\Domain\Cart\CartItem $planItem
+ * @var \Mezzio\Authentication\UserInterface|null $user
+ * @method string translate(string $message, string|null $textDomain = 'default', string|null $locale = null)
+ * @method string url(string $route, array $params = [])
+ * @method string asset(string $path)
+ */
+
+$this->headTitle('Checkout');
+?>
+<section class="wrapper bg-light">
+    <div class="container pt-12 pt-md-14 pb-14 pb-md-16">
+        <div class="row gx-md-8 gx-xl-12 gy-12">
+            <div class="col-lg-8">
+                <?php
+                // Display error messages
+                $error = $_GET['error'] ?? null;
+                $errorMessages = [
+                    'missing_fields' => 'Please fill in all required fields.',
+                    'payment_failed' => 'Payment failed. Please try again or use a different payment method.',
+                    'payment_error' => 'An error occurred while processing your payment. Please try again.',
+                    'payment_cancelled' => 'Payment was cancelled. You can try again when ready.',
+                ];
+                if ($error && isset($errorMessages[$error])):
+                ?>
+                    <div class="alert alert-danger alert-icon mb-6" role="alert">
+                        <i class="uil uil-times-circle"></i>
+                        <?= $this->translate($errorMessages[$error]) ?>
+                    </div>
+                <?php endif; ?>
+
+                <?php if (!$user): ?>
+                    <div class="alert alert-primary alert-icon mb-6" role="alert">
+                        <i class="uil uil-exclamation-circle"></i>
+                        <?= $this->translate('Already have an account?') ?>
+                        <a href="<?= $this->url('login.form') ?>" class="alert-link hover">
+                            <?= $this->translate('Sign in') ?>
+                        </a>
+                        <?= $this->translate('for faster checkout experience.') ?>
+                    </div>
+                <?php endif; ?>
+
+                <h3 class="mb-4"><?= $this->translate('Billing address') ?></h3>
+
+                <form id="checkout-form" class="needs-validation" novalidate method="post" action="<?= $this->url('checkout.process', ['locale' => $locale]) ?>">
+                    <input type="hidden" name="planId" value="<?= $planItem->getItemId() ?>">
+                    <input type="hidden" name="billingPeriod" value="<?= $planItem->getBillingPeriod() ?>">
+                    <input type="hidden" name="csrf" value="<?= $this->escapeHtmlAttr($this->csrf) ?>">
+
+
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <div class="form-floating">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="firstName"
+                                    name="firstName"
+                                    placeholder="First name"
+                                    value="<?=$this->user->getName();?>"
+                                    required
+                                >
+                                <label for="firstName" class="form-label"><?= $this->translate('First name') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Valid first name is required.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6">
+                            <div class="form-floating">
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    id="lastName"
+                                    name="lastName"
+                                    placeholder="Last name"
+                                    value="<?=$this->user->getSurname();?>"
+                                    required
+                                >
+                                <label for="lastName" class="form-label"><?= $this->translate('Last name') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Valid last name is required.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input
+                                    type="email"
+                                    class="form-control"
+                                    id="email" name="email"
+                                    placeholder="Email"
+                                    value="<?=$this->user->getEmail();?>"
+                                    required
+                                >
+                                <label for="email" class="form-label"><?= $this->translate('Email') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Please enter a valid email address for shipping updates.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="address" name="address" placeholder="1234 Main St" value="123 Test Street" required>
+                                <label for="address" class="form-label"><?= $this->translate('Address') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Please enter your shipping address.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="address2" name="address2" placeholder="Apartment or suite" value="Apt 4B">
+                                <label for="address2" class="form-label"><?= $this->translate('Address 2') ?> <span class="text-muted">(<?= $this->translate('Optional') ?>)</span></label>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-select-wrapper">
+                                <select class="form-select" id="country" name="country" required>
+                                    <option value=""><?= $this->translate('Country') ?></option>
+                                    <option value="BG" selected><?= $this->translate('Bulgaria') ?></option>
+                                </select>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Please select a valid country.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="city" name="city" placeholder="City" value="Sofia" required>
+                                <label for="city" class="form-label"><?= $this->translate('City') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('City is required.') ?>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="zip" name="zip" placeholder="Zip Code" value="1000" required>
+                                <label for="zip" class="form-label"><?= $this->translate('Zip Code') ?></label>
+                                <div class="invalid-feedback">
+                                    <?= $this->translate('Zip code required.') ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mt-7 mb-6">
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="same-address" name="sameAddress" value="1">
+                        <label class="form-check-label" for="same-address">
+                            <?= $this->translate('Shipping address is the same as my billing address') ?>
+                        </label>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="save-info" name="saveInfo" value="1">
+                        <label class="form-check-label" for="save-info">
+                            <?= $this->translate('Save this information for next time') ?>
+                        </label>
+                    </div>
+
+                    <hr class="mt-7 mb-6">
+
+                    <h3 class="mb-4"><?= $this->translate('Payment') ?></h3>
+
+                    <div class="mt-3 mb-6">
+                        <div class="form-check">
+                            <input id="credit" name="paymentMethod" type="radio" class="form-check-input" value="credit" checked required>
+                            <label class="form-check-label" for="credit"><?= $this->translate('Credit card') ?></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="debit" name="paymentMethod" type="radio" class="form-check-input" value="debit" required>
+                            <label class="form-check-label" for="debit"><?= $this->translate('Debit card') ?></label>
+                        </div>
+                        <div class="form-check">
+                            <input id="paypal" name="paymentMethod" type="radio" class="form-check-input" value="paypal" required>
+                            <label class="form-check-label" for="paypal">PayPal</label>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-xl-8">
+                            <div class="row gy-3 gx-3">
+                                <div class="col-md-12">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cc-number" name="cardNumber" placeholder="Credit card number" value="4111 1111 1111 1111" required>
+                                        <label for="cc-number" class="form-label"><?= $this->translate('Credit card number') ?></label>
+                                        <div class="invalid-feedback">
+                                            <?= $this->translate('Credit card number is required') ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cc-name" name="cardName" placeholder="Name on card" value="Vasil Dakov" required>
+                                        <label for="cc-name" class="form-label"><?= $this->translate('Name on card') ?></label>
+                                        <div class="invalid-feedback">
+                                            <?= $this->translate('Name on card is required') ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cc-expiration" name="expiryDate" placeholder="Expiration" value="12/28" required>
+                                        <label for="cc-expiration" class="form-label"><?= $this->translate('Expiration') ?></label>
+                                        <div class="invalid-feedback">
+                                            <?= $this->translate('Expiration date required') ?>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3">
+                                    <div class="form-floating">
+                                        <input type="text" class="form-control" id="cc-cvv" name="cvv" placeholder="CVV" value="123" required>
+                                        <label for="cc-cvv" class="form-label">CVV</label>
+                                        <div class="invalid-feedback">
+                                            <?= $this->translate('Security code required') ?>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <hr class="mt-7 mb-6">
+
+                    <div class="form-check mb-4">
+                        <input type="checkbox" class="form-check-input" id="terms" name="terms" value="1" checked required>
+                        <label class="form-check-label" for="terms">
+                            <?= $this->translate('I agree to the') ?>
+                            <a href="/terms" target="_blank"><?= $this->translate('Terms and Conditions') ?></a>
+                        </label>
+                        <div class="invalid-feedback">
+                            <?= $this->translate('You must agree to the terms and conditions') ?>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- /column -->
+
+            <div class="col-lg-4">
+                <h3 class="mb-4"><?= $this->translate('Order Summary') ?></h3>
+
+                <div class="shopping-cart mb-7">
+                    <?php foreach ($items as $item): ?>
+                    <div class="shopping-cart-item d-flex justify-content-between mb-4">
+                        <div class="d-flex flex-row d-flex align-items-center">
+                            <div class="w-100">
+                                <h3 class="post-title h6 lh-xs mb-1">
+                                    <span class="link-dark"><?= $item->getName() ?></span>
+                                </h3>
+                                <?php if ($item->getBillingPeriod()): ?>
+                                <div class="small">
+                                    <strong><?= $this->translate('Billing Period') ?>:</strong>
+                                    <?= ucfirst($item->getBillingPeriod()) ?>
+                                </div>
+                                <?php endif; ?>
+                                <?php if ($item->getQuantity() > 1): ?>
+                                <div class="small">
+                                    <strong><?= $this->translate('Quantity') ?>:</strong>
+                                    <?= $item->getQuantity() ?>
+                                </div>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+                        <div class="ms-2 d-flex align-items-center">
+                            <p class="price fs-sm">
+                                <span class="amount">
+                                    €<?= number_format($item->getTotalFormatted(), 2) ?>
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <!--/.shopping-cart-item -->
+                </div>
+                <!-- /.shopping-cart-->
+
+                <hr class="my-4">
+
+                <div class="table-responsive">
+                    <table class="table table-order">
+                        <tbody>
+                        <tr>
+                            <td class="ps-0"><strong class="text-dark"><?= $this->translate('Subtotal') ?></strong></td>
+                            <td class="pe-0 text-end">
+                                <p class="price">€<?= number_format($cart->getSubtotalFormatted(), 2) ?></p>
+                            </td>
+                        </tr>
+                        <?php if ($cart->getDiscountAmount() > 0): ?>
+                        <tr class="text-success">
+                            <td class="ps-0">
+                                <strong class="text-dark"><?= $this->translate('Discount') ?></strong>
+                                <?php if ($cart->getCouponCode()): ?>
+                                <br><small>(<?= $cart->getCouponCode() ?>)</small>
+                                <?php endif; ?>
+                            </td>
+                            <td class="pe-0 text-end">
+                                <p class="price text-success">-€<?= number_format($cart->getDiscountAmountFormatted(), 2) ?></p>
+                            </td>
+                        </tr>
+                        <?php endif; ?>
+                        <tr>
+                            <td class="ps-0"><strong class="text-dark"><?= $this->translate('Tax') ?> (20%)</strong></td>
+                            <td class="pe-0 text-end">
+                                <p class="price">€<?= number_format($cart->getTaxAmountFormatted(), 2) ?></p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="ps-0"><strong class="text-dark"><?= $this->translate('Grand Total') ?></strong></td>
+                            <td class="pe-0 text-end">
+                                <p class="price text-dark fw-bold">€<?= number_format($cart->getTotalFormatted(), 2) ?></p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <button type="submit" form="checkout-form" class="btn btn-primary rounded w-100 mt-4">
+                    <?= $this->translate('Place Order') ?>
+                </button>
+            </div>
+            <!-- /column -->
+        </div>
+        <!-- /.row -->
+    </div>
+    <!-- /.container -->
+</section>
+
+<script>
+    // Form validation
+    (function() {
+        'use strict';
+
+        console.log('Checkout form script loaded');
+
+        const forms = document.querySelectorAll('.needs-validation');
+        console.log('Found forms:', forms.length);
+
+        Array.from(forms).forEach(form => {
+            console.log('Attaching submit handler to form:', form.id);
+            console.log('Form action:', form.action);
+            console.log('Form method:', form.method);
+
+            form.addEventListener('submit', event => {
+                console.log('Form submit event triggered');
+                console.log('Form validity:', form.checkValidity());
+
+                if (!form.checkValidity()) {
+                    console.log('Form validation failed');
+                    event.preventDefault();
+                    event.stopPropagation();
+                } else {
+                    console.log('Form is valid, submitting...');
+                    // Form will submit normally
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+
+        // Add click handler to button for debugging
+        const submitButton = document.querySelector('button[type="submit"][form="checkout-form"]');
+        if (submitButton) {
+            console.log('Submit button found');
+            submitButton.addEventListener('click', function(e) {
+                console.log('Submit button clicked');
+                e.preventDefault(); // Prevent default to manually trigger
+                const form = document.getElementById('checkout-form');
+                if (form.checkValidity()) {
+                    console.log('Manually triggering form submit');
+                    form.submit(); // Manually submit the form
+                } else {
+                    console.log('Form validation failed, showing errors');
+                    form.classList.add('was-validated');
+                    form.reportValidity();
+                }
+            });
+        } else {
+            console.log('Submit button NOT found');
+        }
+
+        // Format card number
+        const cardNumber = document.getElementById('cc-number');
+        if (cardNumber) {
+            cardNumber.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '');
+                e.target.value = value.match(/.{1,4}/g)?.join(' ') || value;
+            });
+        }
+
+        // Format expiry date
+        const expiry = document.getElementById('cc-expiration');
+        if (expiry) {
+            expiry.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                if (value.length >= 2) {
+                    value = value.slice(0, 2) + '/' + value.slice(2, 4);
+                }
+                e.target.value = value;
+            });
+        }
+    })();
+</script>

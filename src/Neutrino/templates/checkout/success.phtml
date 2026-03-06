@@ -1,0 +1,83 @@
+<?php
+/**
+ * @noinspection ALL
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var \Neutrino\Domain\Billing\Plan|null $plan
+ * @var string $billingPeriod
+ * @method string translate(string $message, string|null $textDomain = 'default', string|null $locale = null)
+ */
+?>
+
+
+<section class="">
+    <div class="wrapper bg-light">
+        <div class="container py-14 py-md-17">
+            <div class="card border-0 mt-5 shadow-none">
+                <div class="card-body py-5 ">
+                    <div class="mb-4 text-center">
+                        <i class="uil uil-check-circle text-success" style="font-size: 5rem;"></i>
+                    </div>
+
+                    <h1 class="text-success mb-3 text-center"><?= $this->translate('Payment Successful!') ?></h1>
+
+                    <?php if ($plan): ?>
+                        <div class="alert alert-success">
+                            <i class="uil uil-info-circle"></i>
+                            <?= $this->translate('A confirmation email has been sent to your email address.') ?>
+                        </div>
+
+                        <h5 class="card-title"><?= $this->translate('Subscription Details') ?></h5>
+
+                        <?php if (!empty($_GET['transaction'])): ?>
+                            <ul class="list-group list-group-flush text-left my-5">
+                                <li class="list-group-item">
+                                    <strong><?= $this->translate('Transaction ID') ?>:</strong>
+                                    <span><?= htmlspecialchars($_GET['transaction']) ?></span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong><?= $this->translate('Plan') ?>:</strong>
+                                    <span><?= $plan->getName() ?></span>
+                                </li>
+
+                                <li class="list-group-item">
+                                    <strong><?= $this->translate('Billing Period') ?>:</strong>:
+                                    <span><?= $billingPeriod === 'yearly' ? $this->translate('Yearly') : $this->translate('Monthly') ?></span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong><?= $this->translate('Price') ?>:</strong>
+                                    <span>
+                                        <?php
+                                        $price = $billingPeriod === 'yearly' ? $plan->getPriceYearly() : $plan->getPriceMonthly();
+                                        $period = $billingPeriod === 'yearly' ? $this->translate('year') : $this->translate('month');
+                                        ?>
+                                        $<?= number_format($price, 2) ?>/<?= $period ?>
+                                    </span>
+                                </li>
+                                <li class="list-group-item">
+                                    <strong><?= $this->translate('Status') ?>:</strong>
+                                    <span><?= $this->translate('Active') ?></span>
+                                </li>
+                            </ul>
+                            <p class="lead mb-4">
+                                <?= $this->translate('Thank you for your purchase!') ?>
+                            </p>
+                        <?php endif; ?>
+                    <?php endif; ?>
+
+
+                    <div class="d-grid gap-2 d-md-block text-center">
+                        <a href="/" class="btn btn-primary me-md-2">
+                            <?= $this->translate('Go to Home') ?>
+                        </a>
+                        <a href="/dashboard" class="btn btn-outline-primary">
+                            <?= $this->translate('Go to Dashboard') ?>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+

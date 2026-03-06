@@ -1,0 +1,94 @@
+<?php
+/**
+ * @noinspection PhpUndefinedFieldInspection
+ * @noinspection PhpUndefinedMethodInspection
+ * @var Laminas\View\Renderer\PhpRenderer $this
+ * @property string $locale
+ * @method string translate(string $message)
+ */
+
+$this->headTitle($this->translate($this->title));
+?>
+
+<div class="vh-100 d-flex align-items-center justify-content-center bg-light">
+
+    <div class="card border-0 border-1 rounded-2" style="width: 520px; max-width: 90vw;">
+        <div class="card-body p-5 p-lg-5">
+
+            <h3 class="mb-4 text-center"><?=$this->translate('Sign in');?></h3>
+
+            <form id="loginForm" method="post" action="<?=$this->url('login.submit');?>">
+                <input type="hidden" name="csrf" value="<?=$this->csrf;?>">
+                <div class="form-floating mb-3">
+                    <input
+                            type="email"
+                            class="form-control"
+                            id="email"
+                            name="email"
+                            placeholder="name@example.com"
+                            value="vasildakov@gmail.com"
+                            required
+                    >
+                    <label for="email"><?=$this->translate('Email');?></label>
+                </div>
+
+                <div class="form-floating mb-4">
+                    <input
+                            type="password"
+                            class="form-control"
+                            id="password"
+                            name="password"
+                            placeholder="Password"
+                            required
+                    >
+                    <label for="password"><?=$this->translate('Password');?></label>
+                </div>
+
+                <div class="mb-4">
+                    <?php if ($this->error): ?>
+                        <div class="text-danger"><?= $this->escapeHtml($this->error) ?></div>
+                    <?php endif; ?>
+                </div>
+
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="rememberMe">
+                        <label class="form-check-label" for="rememberMe">
+                            <?=$this->translate('Remember me');?>
+                        </label>
+                    </div>
+                    <a href="#" class="link-secondary small">
+                        <?=$this->translate('Forgot password?');?>
+                    </a>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-dark">
+                        <?=$this->translate('Sign in');?>
+                    </button>
+                </div>
+
+                <div class="text-center my-4">
+                    Or sign in with
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="/auth/google" class="btn btn-red btn-icon btn-icon-start rounded">
+                        <i class="uil uil-google"></i>
+                        <?=$this->translate('Continue with Google');?>
+                    </a>
+                    <a href="/auth/twitter" class="btn btn-sky btn-icon btn-icon-start rounded disabled">
+                        <i class="uil uil-twitter"></i>
+                        <?=$this->translate('Continue with Twitter');?>
+                    </a>
+                    <a href="#" class="btn btn-blue btn-icon btn-icon-start rounded disabled">
+                        <i class="uil uil-facebook-f"></i>
+                        <?=$this->translate('Continue with Facebook');?>
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>

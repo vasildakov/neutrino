@@ -1,0 +1,30 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @var string $content
+ * @method string asset(string $path)
+ * @method string partial(string $name, array $values = [])
+ */
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Neutrino</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="<?= $this->asset('css/fonts/ubuntu.css') ?>" >
+    <link rel="stylesheet" href="<?= $this->asset('css/fonts/roboto.css') ?>" >
+
+    <!-- Bootstrap 5 -->
+    <link rel="stylesheet" href="<?= $this->asset('css/bootstrap.min.css') ?>">
+    <link rel="stylesheet" href="<?= $this->asset('sandbox/assets/css/plugins.css') ?>">
+    <link rel="stylesheet" href="<?= $this->asset('sandbox/assets/css/style.css') ?>">
+
+</head>
+<body>
+    <main>
+        <?= $content ?>
+    </main>
+</body>
+</html>

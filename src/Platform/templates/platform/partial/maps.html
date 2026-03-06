@@ -1,0 +1,358 @@
+<script>
+    const CITY_VISITS = <?= json_encode(
+        $this->data,
+        JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT
+    ) ?>;
+</script>
+
+
+<script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/map.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/bulgariaLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/geodata/worldLow.js"></script>
+<script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+
+
+
+<script>
+    am5.ready(function () {
+
+        const rows = (typeof CITY_VISITS !== "undefined" && Array.isArray(CITY_VISITS)) ? CITY_VISITS : [];
+
+        // Dispose any previous root for chartdiv (if scripts re-run)
+        am5.registry.rootElements.forEach(r => {
+            if (r.dom && r.dom.id === "chartdiv") r.dispose();
+        });
+
+        const root = am5.Root.new("chartdiv");
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        const chart = root.container.children.push(am5map.MapChart.new(root, {
+            projection: am5map.geoMercator(),
+            panX: "translateX",
+            panY: "translateY",
+            wheelY: "zoom"
+        }));
+
+        // Home view over Europe/Bulgaria
+        chart.setAll({
+            homeGeoPoint: { longitude: 25.2, latitude: 42.7 },
+            homeZoomLevel: 4.2
+        });
+
+        const zoomControl = chart.set("zoomControl", am5map.ZoomControl.new(root, {}));
+        zoomControl.homeButton.set("visible", true);
+
+        // -----------------------------
+        // 1) Europe/world base polygons
+        // -----------------------------
+        const europeSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+            geoJSON: am5geodata_worldLow,
+            exclude: ["AQ"]
+        }));
+
+        europeSeries.mapPolygons.template.setAll({
+            tooltipText: "{name}",
+            interactive: true,
+            fillOpacity: 0.9,
+            strokeOpacity: 0.6,
+            strokeWidth: 1
+        });
+        europeSeries.mapPolygons.template.set("fill", am5.color(0xdbeafe));
+        europeSeries.mapPolygons.template.set("stroke", am5.color(0x93c5fd));
+
+        // --------------------------------
+        // 2) Bulgaria regions OVERLAY
+        // --------------------------------
+        const bgRegionsSeries = chart.series.push(am5map.MapPolygonSeries.new(root, {
+            geoJSON: am5geodata_bulgariaLow
+        }));
+
+        // Ensure it is drawn above the world polygons
+        bgRegionsSeries.set("zIndex", 500);
+
+        // Style BG borders a bit stronger so they stand out
+        bgRegionsSeries.mapPolygons.template.setAll({
+            tooltipText: "{name} ({id})",
+            interactive: true,
+            fillOpacity: 0.15,
+            strokeOpacity: 1,
+            strokeWidth: 2
+        });
+        bgRegionsSeries.mapPolygons.template.set("fill", am5.color(0x2563eb));   // blue tint overlay
+        bgRegionsSeries.mapPolygons.template.set("stroke", am5.color(0x1d4ed8));
+
+        bgRegionsSeries.mapPolygons.template.states.create("hover", {
+            fillOpacity: 0.28
+        });
+
+        // OPTIONAL: If you have values per region, you can color them (choropleth):
+        // bgRegionsSeries.set("valueField", "value");
+        // bgRegionsSeries.set("calculateAggregates", true);
+        // bgRegionsSeries.data.setAll([{ id: "BG-22", value: 250 }, ...]);
+        // bgRegionsSeries.set("heatRules", [{
+        //   target: bgRegionsSeries.mapPolygons.template,
+        //   dataField: "value",
+        //   min: am5.color(0xe3f2fd),
+        //   max: am5.color(0x2563eb),
+        //   key: "fill"
+        // }]);
+
+        // --------------------------------
+        // 3) City bubbles (optional)
+        // --------------------------------
+        const citySeries = chart.series.push(am5map.MapPointSeries.new(root, {
+            longitudeField: "longitude",
+            latitudeField: "latitude",
+            valueField: "value"
+        }));
+        citySeries.set("zIndex", 1000);
+        citySeries.set("clipFront", false);
+
+        const points = rows
+            .map(r => ({
+                name: `${r.city}, ${r.country}`,
+                longitude: Number(r.lon),
+                latitude: Number(r.lat),
+                value: Number(r.visits)
+            }))
+            .filter(p => Number.isFinite(p.longitude) && Number.isFinite(p.latitude) && Number.isFinite(p.value));
+
+        citySeries.data.setAll(points);
+
+        // Numbered bubbles (like your demo)
+        const values = points.map(p => p.value);
+        const minV = values.length ? Math.min(...values) : 0;
+        const maxV = values.length ? Math.max(...values) : 1;
+
+        function radiusFor(v) {
+            const minR = 10, maxR = 34;
+            const value = Math.max(0, Number(v) || 0);
+            const lo = Math.max(0, minV);
+            const hi = Math.max(lo + 1, maxV);
+            const t = (Math.sqrt(value) - Math.sqrt(lo)) / (Math.sqrt(hi) - Math.sqrt(lo) || 1);
+            return minR + t * (maxR - minR);
+        }
+
+        citySeries.bullets.push(function (root, series, dataItem) {
+            const r = radiusFor(dataItem.get("value"));
+
+            const container = am5.Container.new(root, { centerX: am5.p50, centerY: am5.p50 });
+
+            container.children.push(am5.Circle.new(root, {
+                radius: r,
+                fill: am5.color(0x111827),
+                fillOpacity: 0.9,
+                stroke: am5.color(0xffffff),
+                strokeOpacity: 0.9,
+                strokeWidth: 1,
+                tooltipText: "{name}\nVisits: {value.formatNumber('#,###')}"
+            }));
+
+            container.children.push(am5.Label.new(root, {
+                text: "{value.formatNumber('#,###')}",
+                populateText: true,
+                centerX: am5.p50,
+                centerY: am5.p50,
+                fontSize: 12,
+                fontWeight: "600",
+                fill: am5.color(0xffffff)
+            }));
+
+            return am5.Bullet.new(root, { sprite: container });
+        });
+
+        // Apply home view after base is ready
+        europeSeries.events.on("datavalidated", function () {
+            chart.goHome();
+        });
+
+        chart.goHome();
+        chart.appear(800, 100);
+
+    });
+</script>
+
+
+
+
+
+<script>
+    am5.ready(function () {
+        // Root
+        const root = am5.Root.new("bulgaria-map");
+        root.setThemes([am5themes_Animated.new(root)]);
+
+        // Chart
+        const chart = root.container.children.push(
+            am5map.MapChart.new(root, {
+                projection: am5map.geoMercator(),
+                panX: "none",
+                panY: "none",
+                wheelX: "none",
+                wheelY: "none"
+            })
+        );
+
+        // ----------------------------------------------------
+        // 1) Regions choropleth (BG-01..BG-28)
+        // ----------------------------------------------------
+        const polygonSeries = chart.series.push(
+            am5map.MapPolygonSeries.new(root, {
+                geoJSON: am5geodata_bulgariaLow,
+                valueField: "value",
+                calculateAggregates: true
+            })
+        );
+
+        const salesByRegionId = {
+            "BG-01": 120, "BG-02": 65,  "BG-03": 50,  "BG-04": 45,
+            "BG-05": 38,  "BG-06": 42,  "BG-07": 52,  "BG-08": 48,
+            "BG-09": 55,  "BG-10": 47,  "BG-11": 43,  "BG-12": 60,
+            "BG-13": 58,  "BG-14": 62,  "BG-15": 70,  "BG-16": 95,
+            "BG-17": 50,  "BG-18": 68,  "BG-19": 52,  "BG-20": 61,
+            "BG-21": 64,  "BG-22": 250, "BG-23": 85,  "BG-24": 72,
+            "BG-25": 46,  "BG-26": 54,  "BG-27": 49,  "BG-28": 57
+        };
+
+        polygonSeries.data.setAll(
+            Object.entries(salesByRegionId).map(([id, value]) => ({ id, value }))
+        );
+
+// force visible polygons (theme/CSS-proof)
+        polygonSeries.mapPolygons.template.setAll({
+            tooltipText: "{name}",
+            interactive: true,
+            fillOpacity: 0.9,
+            strokeOpacity: 0.8,
+            strokeWidth: 1
+        });
+
+        polygonSeries.set("heatRules", [{
+            target: polygonSeries.mapPolygons.template,
+            dataField: "value",
+            min: am5.color(0xe3f2fd),
+            max: am5.color(0x36A2EB),
+            key: "fill"
+        }]);
+
+        // IMPORTANT: set actual colors (otherwise can be transparent in some setups)
+        polygonSeries.mapPolygons.template.set("fill", am5.color(0xdbeafe));
+        polygonSeries.mapPolygons.template.set("stroke", am5.color(0x93c5fd));
+
+        polygonSeries.mapPolygons.template.states.create("hover", {
+            fill: am5.color(0xbfdbfe)
+        });
+
+
+        // ----------------------------------------------------
+        // 2) City bubbles (animated + size based on sales)
+        // ----------------------------------------------------
+        const citySeries = am5map.MapPointSeries.new(root, {
+            longitudeField: "longitude",
+            latitudeField: "latitude",
+            valueField: "value",
+            calculateAggregates: true
+        });
+
+        // Ensure it renders ON TOP of polygons
+        chart.series.push(citySeries);
+        citySeries.set("zIndex", 1000);
+
+        // Example city sales (replace with real data)
+        citySeries.data.setAll([
+            { name: "Sofia",        longitude: 23.3219, latitude: 42.6977, value: 9000 },
+            { name: "Plovdiv",      longitude: 24.7453, latitude: 42.1354, value: 5200 },
+            { name: "Varna",        longitude: 27.9147, latitude: 43.2141, value: 4600 },
+            { name: "Burgas",       longitude: 27.4626, latitude: 42.5048, value: 3800 },
+            { name: "Ruse",         longitude: 25.9552, latitude: 43.8356, value: 2600 },
+            { name: "Stara Zagora", longitude: 25.6249, latitude: 42.4258, value: 2400 },
+            { name: "Pleven",       longitude: 24.6180, latitude: 43.4170, value: 2100 }
+        ]);
+
+        // Radius scaling (sqrt gives nicer perceptual scaling)
+        function radiusFor(value, low, high) {
+            const minR = 8;
+            const maxR = 34;
+
+            const v = Math.max(0, value ?? 0);
+            const lo = Math.max(0, low ?? 0);
+            const hi = Math.max(lo + 1, high ?? (lo + 1));
+
+            const t = (Math.sqrt(v) - Math.sqrt(lo)) / (Math.sqrt(hi) - Math.sqrt(lo) || 1);
+            return minR + t * (maxR - minR);
+        }
+
+        // Bullet: solid + pulse ring
+        citySeries.bullets.push(function (root, series, dataItem) {
+            const container = am5.Container.new(root, {});
+
+            const ring = am5.Circle.new(root, {
+                fill: am5.color(0xFF6584),
+                fillOpacity: 0.20,
+                stroke: am5.color(0xFF6584),
+                strokeOpacity: 0.85,
+                strokeWidth: 2
+            });
+
+            const solid = am5.Circle.new(root, {
+                fill: am5.color(0xFF6584),
+                fillOpacity: 0.70,
+                stroke: am5.color(0xffffff),
+                strokeWidth: 2,
+                tooltipText: "{name}: {value.formatNumber('#,###')} sales"
+            });
+
+            container.children.push(ring);
+            container.children.push(solid);
+
+            // Set initial radius (fallback before aggregates are known)
+            const initialR = 12;
+            ring.set("radius", initialR);
+            solid.set("radius", initialR);
+
+            // Size based on value (after aggregates known, updates automatically)
+            const applyRadius = () => {
+                const low = series.getPrivate("valueLow");
+                const high = series.getPrivate("valueHigh");
+                const v = dataItem.get("value");
+                const r = radiusFor(v, low, high);
+
+                // Stop previous animations before restarting (important if data updates)
+                ring._killAllAnimations?.();
+
+                ring.set("radius", r);
+                solid.set("radius", r);
+
+                // Pulse
+                ring.animate({
+                    key: "radius",
+                    from: r,
+                    to: r * 2.5,
+                    duration: 1200,
+                    loops: Infinity,
+                    easing: am5.ease.out(am5.ease.cubic)
+                });
+
+                ring.animate({
+                    key: "opacity",
+                    from: 0.9,
+                    to: 0,
+                    duration: 1200,
+                    loops: Infinity,
+                    easing: am5.ease.out(am5.ease.cubic)
+                });
+            };
+
+            // Apply once now, then again when series aggregates are ready
+            applyRadius();
+            series.events.on("datavalidated", applyRadius);
+
+            return am5.Bullet.new(root, { sprite: container });
+        });
+
+        // Cleanup (if you re-render the page/component)
+        window.addEventListener("beforeunload", () => root.dispose());
+    });
+</script>
+

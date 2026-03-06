@@ -1,0 +1,148 @@
+<?php
+/**
+ * @var \Laminas\View\Renderer\PhpRenderer $this
+ * @method string translate(string $message, string|null $textDomain = 'default', string|null $locale = null)
+ */
+?>
+<footer class="bg-dark text-inverse">
+    <div class="container pt-13 pt-md-15 pb-7">
+        <div class="row gy-6 gy-lg-0">
+            <div class="col-lg-4">
+                <div class="widget">
+                    <h3 class="h2 mb-3 text-white">Join the Community</h3>
+                    <p class="lead mb-5">Let's make something great together. We are trusted by over 5000+ clients. Join them by using our services and grow your business.</p>
+                    <a href="#" class="btn btn-white  rounded-pill">Join Us</a>
+                </div>
+                <!-- /.widget -->
+            </div>
+            <!-- /column -->
+            <div class="col-md-4 col-lg-2 offset-lg-2">
+                <div class="widget">
+                    <h4 class="widget-title text-white mb-3">Need Help?</h4>
+                    <ul class="list-unstyled text-reset mb-0">
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Get Started</a></li>
+                        <li><a href="#">Terms of Use</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#" id="cookie-revoke">Withdraw consent</a></li>
+                    </ul>
+                </div>
+                <!-- /.widget -->
+            </div>
+            <!-- /column -->
+            <div class="col-md-4 col-lg-2">
+                <div class="widget">
+                    <h4 class="widget-title text-white mb-3">Learn More</h4>
+                    <ul class="list-unstyled  mb-0">
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Our Story</a></li>
+                        <li><a href="#">Projects</a></li>
+                        <li><a href="#">Pricing</a></li>
+                        <li><a href="#">Features</a></li>
+                    </ul>
+                </div>
+                <!-- /.widget -->
+            </div>
+            <!-- /column -->
+            <div class="col-md-4 col-lg-2">
+                <div class="widget">
+                    <h4 class="widget-title text-white mb-3">Get in Touch</h4>
+                    <address>Moonshine St. 14/05 Light City, London, United Kingdom</address>
+                    <a href="mailto:first.last@email.com">info@email.com</a><br /> 00 (123) 456 78 90
+                </div>
+                <!-- /.widget -->
+            </div>
+            <!-- /column -->
+        </div>
+        <!--/.row -->
+        <hr class="mt-13 mt-md-15 mb-7" />
+        <div class="d-md-flex align-items-center justify-content-between">
+            <p class="mb-2 mb-lg-0">© 2026 Neutrino Technologies Ltd. All rights reserved.</p>
+            <nav class="nav social social-white text-md-end">
+                <a href="#"><i class="uil uil-twitter"></i></a>
+                <a href="#"><i class="uil uil-facebook-f"></i></a>
+                <a href="#"><i class="uil uil-dribbble"></i></a>
+                <a href="#"><i class="uil uil-instagram"></i></a>
+                <a href="#"><i class="uil uil-youtube"></i></a>
+            </nav>
+            <!-- /.social -->
+        </div>
+        <!-- /div -->
+    </div>
+    <!-- /.container -->
+</footer>
+
+
+<!-- Cookie revoke button. Move it to consent.js -->
+<div class="cookie-revoke d-none" id="cookie-revoke-msg"></div>
+<script>
+    (function () {
+        function setText(msg, isError = false) {
+            const el = document.getElementById('cookie-revoke-msg');
+            if (!el) return;
+
+            el.textContent = msg;
+            el.classList.remove('d-none', 'text-danger', 'text-success');
+            el.classList.add(isError ? 'text-danger' : 'text-success');
+
+            window.setTimeout(() => {
+                el.classList.add('d-none');
+            }, 3000);
+        }
+
+        function stopTrackingNow() {
+            // Add your specific tracking shutdown here if needed
+            // Example GA4:
+            // window['ga-disable-G-XXXXXXXXXX'] = true;
+
+            // Delete common tracking cookies (double safety; backend also sets expirations)
+            ['_ga','_gid','_gat','_fbp','_gcl_au'].forEach(name => {
+                document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT; SameSite=Lax`;
+            });
+        }
+
+        async function revokeConsent() {
+            const res = await fetch('/api/consent/revoke', {
+                method: 'POST',
+                headers: { 'Accept': 'application/json' }
+            });
+
+            if (!res.ok) {
+                throw new Error(`Revoke failed (${res.status})`);
+            }
+
+            // Response sets cookies via headers; body just confirms purposes.
+            const json = await res.json();
+            stopTrackingNow();
+
+            // If your site injects tags conditionally server-side, a reload ensures they're gone.
+            // You can skip reload if you already block scripts via type="text/plain".
+            // location.reload();
+
+            return json;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btn = document.getElementById('cookie-revoke');
+            if (!btn) return;
+
+            btn.addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                btn.setAttribute('aria-busy', 'true');
+                btn.classList.add('disabled');
+
+                try {
+                    await revokeConsent();
+                    setText('Consent withdrawn. Optional cookies disabled.');
+                } catch (err) {
+                    console.error(err);
+                    setText('Could not withdraw consent. Please try again.', true);
+                } finally {
+                    btn.removeAttribute('aria-busy');
+                    btn.classList.remove('disabled');
+                }
+            });
+        });
+    })();
+</script>

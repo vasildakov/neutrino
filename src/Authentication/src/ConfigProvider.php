@@ -51,7 +51,6 @@ class ConfigProvider
                 GoogleLoginHandler::class    => GoogleLoginHandlerFactory::class,
                 GoogleCallbackHandler::class => GoogleCallbackHandlerFactory::class,
                 GoogleSuccessHandler::class  => GoogleSuccessHandlerFactory::class,
-                GoogleUserResolverInterface::class => GoogleUserResolverFactory::class,
 
                 // Twitter
                 Twitter::class                 => TwitterProviderFactory::class,
