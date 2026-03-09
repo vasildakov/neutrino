@@ -43,11 +43,11 @@ final readonly class ViewCartHandler implements RequestHandlerInterface
 
         $locale    = $request->getAttribute('routeLocale') ?? 'en';
         $sessionId = $session->getId();
-        $userId    = $session->get('identity');
+        $identity    = $session->get('identity');
 
-        if ($userId) {
-            // Find user by email (since session stores email as identity)
-            $user = $this->userRepository->findOneByEmail($userId);
+        if ($identity) {
+            // Find user by ID (identity is UUID)
+            $user = $this->userRepository->findOneByEmail($identity);
 
             if (! $user) {
                 throw new RuntimeException('User not found.');

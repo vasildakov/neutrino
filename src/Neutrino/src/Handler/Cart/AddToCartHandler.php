@@ -57,11 +57,11 @@ final readonly class AddToCartHandler implements RequestHandlerInterface
         // Resolve cart ownership
         try {
             $sessionId = $session->getId();
-            $userId    = $session->get('identity');
+            $identity    = $session->get('identity');
 
-            if ($userId) {
-                // Find user by email (since session stores email as identity)
-                $user = $this->userRepository->findOneByEmail($userId);
+            if ($identity) {
+                // Find user by ID (identity is UUID)
+                $user = $this->userRepository->findOneByEmail($identity);
 
                 if (! $user) {
                     return new JsonResponse(['error' => 'User not found'], 404);
